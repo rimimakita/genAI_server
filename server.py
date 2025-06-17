@@ -76,13 +76,24 @@ def async_process_and_store(id_image_pairs):
 @app.route("/process_batch", methods=["POST"])
 def process_batch():
     files = request.files
-    id_image_pairs = []
-    for rect_id in files:
-        image = Image.open(files[rect_id]).convert("RGB")
-        id_image_pairs.append((rect_id, image))
 
-    threading.Thread(target=async_process_and_store, args=(id_image_pairs,)).start()
+    # 画像の読み込みと変換を非同期で実行
+    def load_and_enqueue():
+        id_image_pairs = []
+        for rect_id in files:
+            try:
+                image = Image.open(files[rect_id]).convert("RGB")
+                id_image_pairs.append((rect_id, image))
+            except Exception as e:
+                print(f"[Server] Error loading image {rect_id}: {e}")
+        async_process_and_store(id_image_pairs)
+
+    # スレッドで処理開始（Flaskの処理とは独立）
+    threading.Thread(target=load_and_enqueue).start()
+
+    # 即レスポンス（画像読み込みを待たない）
     return "Accepted", 202
+
 
 @app.route("/get_results", methods=["GET"])
 def get_all_results():
