@@ -16,34 +16,39 @@ CORS(app)
 result_queue = deque()
 queue_lock = threading.Lock()
 
-# モデル初期化
+# モデル関連を初期は None に
+blip_processor = None
+blip_model = None
+pipe = None
+
+# デバイス設定
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 dtype = torch.float16
 
-blip_processor = Blip2Processor.from_pretrained("Salesforce/blip2-opt-2.7b")
-blip_model = Blip2ForConditionalGeneration.from_pretrained(
-    "Salesforce/blip2-opt-2.7b", torch_dtype=dtype
-).to(device).eval()
+def init_models():
+    global blip_processor, blip_model, pipe
+    blip_processor = Blip2Processor.from_pretrained("Salesforce/blip2-opt-2.7b")
+    blip_model = Blip2ForConditionalGeneration.from_pretrained(
+        "Salesforce/blip2-opt-2.7b", torch_dtype=dtype
+    ).to(device).eval()
+    pipe = AutoPipelineForText2Image.from_pretrained(
+        "stabilityai/sdxl-turbo", torch_dtype=dtype, variant="fp16", use_safetensors=True
+    ).to(device)
 
-pipe = AutoPipelineForText2Image.from_pretrained(
-    "stabilityai/sdxl-turbo", torch_dtype=dtype, variant="fp16", use_safetensors=True
-).to(device)
+    # 任意：ウォームアップ（必要な場合のみ）
+    with torch.no_grad():
+        _ = pipe(prompt=["dummy"], num_inference_steps=1, guidance_scale=0.0).images
 
-# ダミーでウォームアップ
-with torch.no_grad():
-    _ = pipe(prompt=["dummy"], num_inference_steps=1, guidance_scale=0.0).images
-
-# プロンプト構築
 def build_prompt(caption):
     return f"A high-quality product image of {caption}, displayed on a plain white background with soft studio lighting. The item is centered and clearly visible, with no text, no watermark, and no packaging — just the product itself. Typical Amazon product listing style."
 
-# 処理関数
 def process_image_batch(indexed_images):
     indices, images = zip(*indexed_images)
     with torch.no_grad():
         inputs = blip_processor(images=list(images), return_tensors="pt").to(device)
         generated_ids = blip_model.generate(pixel_values=inputs["pixel_values"], max_new_tokens=40)
         captions = blip_processor.batch_decode(generated_ids, skip_special_tokens=True)
+
     prompts = [build_prompt(c.strip()) for c in captions]
     with torch.no_grad():
         generated_images = pipe(prompt=prompts, num_inference_steps=1, guidance_scale=0.0).images
@@ -54,6 +59,12 @@ def process_image_batch(indexed_images):
         img.save(buffer, format="JPEG")
         buffer.seek(0)
         results.append((idx, buffer.read()))
+
+    # メモリ開放（必要なら）
+    import gc
+    torch.cuda.empty_cache()
+    gc.collect()
+
     return results
 
 def split_into_batches(indexed_images, max_batch_size=3):
@@ -110,4 +121,5 @@ def get_all_results():
     })
 
 if __name__ == "__main__":
+    init_models()
     app.run(host="0.0.0.0", port=5000)
