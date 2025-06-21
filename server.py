@@ -8,6 +8,11 @@ from diffusers import AutoPipelineForText2Image
 from concurrent.futures import ThreadPoolExecutor
 from collections import deque
 import threading
+import os  # ← これを追加
+
+# ✅ ここにキャッシュディレクトリの指定を追加
+CACHE_DIR = "/workspace/cache"
+os.makedirs(CACHE_DIR, exist_ok=True)
 
 app = Flask(__name__)
 CORS(app)
@@ -27,12 +32,21 @@ dtype = torch.float16
 
 def init_models():
     global blip_processor, blip_model, pipe
-    blip_processor = Blip2Processor.from_pretrained("Salesforce/blip2-opt-2.7b")
+    blip_processor = Blip2Processor.from_pretrained(
+        "Salesforce/blip2-opt-2.7b",
+        cache_dir=CACHE_DIR
+    )
     blip_model = Blip2ForConditionalGeneration.from_pretrained(
-        "Salesforce/blip2-opt-2.7b", torch_dtype=dtype
+        "Salesforce/blip2-opt-2.7b", 
+        torch_dtype=dtype,
+        cache_dir=CACHE_DIR
     ).to(device).eval()
     pipe = AutoPipelineForText2Image.from_pretrained(
-        "stabilityai/sdxl-turbo", torch_dtype=dtype, variant="fp16", use_safetensors=True
+        "stabilityai/sdxl-turbo", 
+        torch_dtype=dtype, 
+        variant="fp16", 
+        use_safetensors=True,
+        cache_dir=CACHE_DIR
     ).to(device)
 
     # 任意：ウォームアップ（必要な場合のみ）
