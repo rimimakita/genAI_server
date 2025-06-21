@@ -103,10 +103,17 @@ def process_batch():
     files = request.files
     id_image_pairs = []
     for rect_id in files:
-        image = Image.open(files[rect_id]).convert("RGB")
+        raw = files[rect_id].read()  # バイナリのまま受け取る（変換は後回し）
         id_image_pairs.append((rect_id, image))
 
-    threading.Thread(target=async_process_and_store, args=(id_image_pairs,)).start()
+    def worker(pairs):
+        decoded = []
+        for rect_id, raw in pairs:
+            image = Image.open(io.BytesIO(raw)).convert("RGB")
+            decoded.append((rect_id, image))
+        async_process_and_store(decoded)
+
+    threading.Thread(target=worker, args=(id_image_pairs,)).start()
     return "Accepted", 202
 
 @app.route("/get_results", methods=["GET"])
