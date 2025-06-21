@@ -104,7 +104,7 @@ def process_batch():
     id_image_pairs = []
     for rect_id in files:
         raw = files[rect_id].read()  # バイナリのまま受け取る（変換は後回し）
-        id_image_pairs.append((rect_id, image))
+        id_image_pairs.append((rect_id, raw))
 
     def worker(pairs):
         decoded = []
