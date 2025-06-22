@@ -5,6 +5,7 @@ import io
 import torch
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
 from diffusers import AutoPipelineForText2Image
+from diffusers import DDIMScheduler
 from concurrent.futures import ThreadPoolExecutor
 from collections import deque
 import threading
@@ -50,6 +51,9 @@ def init_models():
         use_safetensors=True,
         cache_dir=CACHE_DIR
     ).to(device)
+
+    # ✅ スケジューラをDDIMに変更（より寛容）
+    pipe.scheduler = DDIMScheduler.from_config(pipe.scheduler.config)
 
     # 任意：ウォームアップ（必要な場合のみ）
     with torch.no_grad():
