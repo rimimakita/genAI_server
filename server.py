@@ -118,28 +118,58 @@ def process_batch():
 
 @app.route("/get_results", methods=["GET"])
 def get_all_results():
-    with queue_lock:
-        if not result_queue:
-            print("[Server] Queue is empty")
-            return "", 204
-        results_to_send = list(result_queue)
-        result_queue.clear()
+    timeout = 5.0  # 最大5秒待つ
+    poll_interval = 0.1  # チェック間隔
+    waited = 0
 
-    response_parts = []
-    for rect_id, jpeg_bytes in results_to_send:
-        part = (
-            f"--myboundary\r\n"
-            f"Content-Type: image/jpeg\r\n"
-            f"Content-ID: <{rect_id}>\r\n"
-            f"\r\n"
-        ).encode("utf-8") + jpeg_bytes + b"\r\n"
-        response_parts.append(part)
-    response_parts.append(b"--myboundary--\r\n")
-    body = b"".join(response_parts)
+    while waited < timeout:
+        with queue_lock:
+            if result_queue:
+                results_to_send = list(result_queue)
+                result_queue.clear()
 
-    return Response(body, status=200, headers={
-        "Content-Type": "multipart/mixed; boundary=myboundary"
-    })
+                response_parts = []
+                for rect_id, jpeg_bytes in results_to_send:
+                    part = (
+                        f"--myboundary\r\n"
+                        f"Content-Type: image/jpeg\r\n"
+                        f"Content-ID: <{rect_id}>\r\n"
+                        f"\r\n"
+                    ).encode("utf-8") + jpeg_bytes + b"\r\n"
+                    response_parts.append(part)
+                response_parts.append(b"--myboundary--\r\n")
+                body = b"".join(response_parts)
+
+                return Response(body, status=200, headers={
+                    "Content-Type": "multipart/mixed; boundary=myboundary"
+                })
+        time.sleep(poll_interval)
+        waited += poll_interval
+
+    return "", 204
+# def get_all_results():
+#     with queue_lock:
+#         if not result_queue:
+#             print("[Server] Queue is empty")
+#             return "", 204
+#         results_to_send = list(result_queue)
+#         result_queue.clear()
+
+#     response_parts = []
+#     for rect_id, jpeg_bytes in results_to_send:
+#         part = (
+#             f"--myboundary\r\n"
+#             f"Content-Type: image/jpeg\r\n"
+#             f"Content-ID: <{rect_id}>\r\n"
+#             f"\r\n"
+#         ).encode("utf-8") + jpeg_bytes + b"\r\n"
+#         response_parts.append(part)
+#     response_parts.append(b"--myboundary--\r\n")
+#     body = b"".join(response_parts)
+
+#     return Response(body, status=200, headers={
+#         "Content-Type": "multipart/mixed; boundary=myboundary"
+#     })
 
 if __name__ == "__main__":
     init_models()
