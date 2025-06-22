@@ -9,6 +9,8 @@ from concurrent.futures import ThreadPoolExecutor
 from collections import deque
 import threading
 import os  # ← これを追加
+import time
+
 
 # ✅ ここにキャッシュディレクトリの指定を追加
 CACHE_DIR = "/workspace/cache"
