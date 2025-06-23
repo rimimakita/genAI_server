@@ -69,7 +69,7 @@ def process_image_batch(indexed_images):
         inputs = blip_processor(images=list(images), return_tensors="pt")
         # inputs = {k: v.to(device=device, dtype=torch.float16) for k, v in inputs.items()}
         inputs = {
-            k: v.to(device=device, dtype=torch.float16) if v.dtype.is_floating_point else v.to(device=device)
+            k: v.to(device=device, dtype=torch.float32) if v.dtype.is_floating_point else v.to(device=device)
             for k, v in inputs.items()
         }
 
@@ -103,7 +103,7 @@ def split_into_batches(indexed_images, max_batch_size=3):
 
 def async_process_and_store(id_image_pairs):
     batches = split_into_batches(id_image_pairs, max_batch_size=3)
-    with ThreadPoolExecutor(max_workers=min(len(batches), 3)) as executor:
+    with ThreadPoolExecutor(max_workers=min(len(batches), 1)) as executor:
         futures = executor.map(process_image_batch, batches)
 
     results = []
@@ -178,37 +178,6 @@ def get_all_results():
         "Content-Type": "multipart/mixed; boundary=myboundary"
     })
 
-# @app.route("/get_results", methods=["GET"])
-# def get_all_results():
-#     timeout = 5.0  # 最大5秒待つ
-#     poll_interval = 0.05 # チェック間隔
-#     waited = 0
-
-#     while waited < timeout:
-#         with queue_lock:
-#             if result_queue:
-#                 results_to_send = list(result_queue)
-#                 result_queue.clear()
-
-#                 response_parts = []
-#                 for rect_id, jpeg_bytes in results_to_send:
-#                     part = (
-#                         f"--myboundary\r\n"
-#                         f"Content-Type: image/jpeg\r\n"
-#                         f"Content-ID: <{rect_id}>\r\n"
-#                         f"\r\n"
-#                     ).encode("utf-8") + jpeg_bytes + b"\r\n"
-#                     response_parts.append(part)
-#                 response_parts.append(b"--myboundary--\r\n")
-#                 body = b"".join(response_parts)
-
-#                 return Response(body, status=200, headers={
-#                     "Content-Type": "multipart/mixed; boundary=myboundary"
-#                 })
-#         time.sleep(poll_interval)
-#         waited += poll_interval
-
-#     return "", 204
 
 
 if __name__ == "__main__":
