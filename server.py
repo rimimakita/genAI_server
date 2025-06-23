@@ -67,7 +67,12 @@ def process_image_batch(indexed_images):
     indices, images = zip(*indexed_images)
     with torch.no_grad():
         inputs = blip_processor(images=list(images), return_tensors="pt")
-        inputs = {k: v.to(device=device, dtype=torch.float16) for k, v in inputs.items()}
+        # inputs = {k: v.to(device=device, dtype=torch.float16) for k, v in inputs.items()}
+        inputs = {
+            k: v.to(device=device, dtype=torch.float16) if v.dtype.is_floating_point else v.to(device=device)
+            for k, v in inputs.items()
+        }
+
     # with torch.no_grad():
     #     inputs = blip_processor(images=list(images), return_tensors="pt").to(device)
         generated_ids = blip_model.generate(pixel_values=inputs["pixel_values"], max_new_tokens=40)
@@ -96,7 +101,7 @@ def split_into_batches(indexed_images, max_batch_size=3):
 
 def async_process_and_store(id_image_pairs):
     batches = split_into_batches(id_image_pairs, max_batch_size=3)
-    with ThreadPoolExecutor(max_workers=min(len(batches), 4)) as executor:
+    with ThreadPoolExecutor(max_workers=min(len(batches), 3)) as executor:
         futures = executor.map(process_image_batch, batches)
 
     results = []
