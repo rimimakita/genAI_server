@@ -7,11 +7,11 @@ import torch
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
 from diffusers import AutoPipelineForText2Image
 from diffusers import DDIMScheduler
-from concurrent.futures import ThreadPoolExecutor
 from collections import deque
 import threading
 import os  # ← これを追加
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 # ✅ ここにキャッシュディレクトリの指定を追加
@@ -101,19 +101,37 @@ def process_image_batch(indexed_images):
 def split_into_batches(indexed_images, max_batch_size=3):
     return [indexed_images[i:i+max_batch_size] for i in range(0, len(indexed_images), max_batch_size)]
 
+
 def async_process_and_store(id_image_pairs):
     batches = split_into_batches(id_image_pairs, max_batch_size=3)
-    with ThreadPoolExecutor(max_workers=min(len(batches), 1)) as executor:
-        futures = executor.map(process_image_batch, batches)
+    with ThreadPoolExecutor(max_workers=min(len(batches), 2)) as executor:
+        future_to_batch = {
+            executor.submit(process_image_batch, batch): batch for batch in batches
+        }
 
-    results = []
-    for batch_result in futures:
-        results.extend(batch_result)
+        for future in as_completed(future_to_batch):
+            try:
+                batch_result = future.result()
+                with queue_lock:
+                    for rect_id, jpeg_bytes in batch_result:
+                        print(f"[Server] Add to queue immediately: ID={rect_id}, size={len(jpeg_bytes)} bytes")
+                        result_queue.append((rect_id, jpeg_bytes))
+            except Exception as e:
+                print(f"[Server] Error processing batch: {e}")
 
-    with queue_lock:
-        for rect_id, jpeg_bytes in results:
-            print(f"[Server] Add to queue: ID={rect_id}, size={len(jpeg_bytes)} bytes")
-            result_queue.append((rect_id, jpeg_bytes))
+# def async_process_and_store(id_image_pairs):
+#     batches = split_into_batches(id_image_pairs, max_batch_size=3)
+#     with ThreadPoolExecutor(max_workers=min(len(batches), 1)) as executor:
+#         futures = executor.map(process_image_batch, batches)
+
+#     results = []
+#     for batch_result in futures:
+#         results.extend(batch_result)
+
+#     with queue_lock:
+#         for rect_id, jpeg_bytes in results:
+#             print(f"[Server] Add to queue: ID={rect_id}, size={len(jpeg_bytes)} bytes")
+#             result_queue.append((rect_id, jpeg_bytes))
 
 @app.route("/process_batch", methods=["POST"])
 def process_batch():
