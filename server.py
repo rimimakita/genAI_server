@@ -127,8 +127,8 @@ def process_batch():
 
 @app.route("/get_results", methods=["GET"])
 def get_all_results():
-    timeout = 5.0  # 最大5秒待つ
-    poll_interval = 0.1  # チェック間隔
+    timeout = 10.0  # 最大5秒待つ
+    poll_interval = 0.05 # チェック間隔
     waited = 0
 
     while waited < timeout:
