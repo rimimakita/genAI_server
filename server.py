@@ -79,8 +79,10 @@ def process_image_batch(indexed_images):
         captions = blip_processor.batch_decode(generated_ids, skip_special_tokens=True)
 
     prompts = [build_prompt(c.strip()) for c in captions]
+    torch.cuda.empty_cache()  # ✅ 生成直前に空ける
     with torch.no_grad():
         generated_images = pipe(prompt=prompts, num_inference_steps=1, guidance_scale=0.0).images
+    torch.cuda.empty_cache()  # ✅ 生成直後にも一度空ける（BLIPとSDXLが両方乗らないように）
 
     results = []
     for idx, img in zip(indices, generated_images):
@@ -91,7 +93,7 @@ def process_image_batch(indexed_images):
 
     # メモリ開放（必要なら）
     import gc
-    torch.cuda.empty_cache()
+    
     gc.collect()
 
     return results
