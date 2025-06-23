@@ -1,4 +1,5 @@
 from flask import Flask, request, Response
+from flask import after_this_request
 from flask_cors import CORS
 from PIL import Image
 import io
@@ -127,35 +128,80 @@ def process_batch():
 
 @app.route("/get_results", methods=["GET"])
 def get_all_results():
-    timeout = 10.0  # 最大5秒待つ
-    poll_interval = 0.05 # チェック間隔
+    timeout = 5.0  # 最大5秒待つ
+    poll_interval = 0.05
     waited = 0
+
+    results_to_send = []
 
     while waited < timeout:
         with queue_lock:
             if result_queue:
-                results_to_send = list(result_queue)
-                result_queue.clear()
-
-                response_parts = []
-                for rect_id, jpeg_bytes in results_to_send:
-                    part = (
-                        f"--myboundary\r\n"
-                        f"Content-Type: image/jpeg\r\n"
-                        f"Content-ID: <{rect_id}>\r\n"
-                        f"\r\n"
-                    ).encode("utf-8") + jpeg_bytes + b"\r\n"
-                    response_parts.append(part)
-                response_parts.append(b"--myboundary--\r\n")
-                body = b"".join(response_parts)
-
-                return Response(body, status=200, headers={
-                    "Content-Type": "multipart/mixed; boundary=myboundary"
-                })
+                results_to_send = list(result_queue)  # 一旦コピー
+                break  # whileループを抜けて送信準備へ
         time.sleep(poll_interval)
         waited += poll_interval
 
-    return "", 204
+    if not results_to_send:
+        return "", 204  # データがなかった場合は終了
+
+    # 🔐 ロック外でレスポンス構築
+    response_parts = []
+    for rect_id, jpeg_bytes in results_to_send:
+        part = (
+            f"--myboundary\r\n"
+            f"Content-Type: image/jpeg\r\n"
+            f"Content-ID: <{rect_id}>\r\n"
+            f"\r\n"
+        ).encode("utf-8") + jpeg_bytes + b"\r\n"
+        response_parts.append(part)
+    response_parts.append(b"--myboundary--\r\n")
+    body = b"".join(response_parts)
+
+    # ✅ レスポンス送信が完了したときだけキューを消す
+    @after_this_request
+    def clear_sent_queue(response):
+        with queue_lock:
+            for item in results_to_send:
+                if item in result_queue:
+                    result_queue.remove(item)
+        return response
+
+    return Response(body, status=200, headers={
+        "Content-Type": "multipart/mixed; boundary=myboundary"
+    })
+
+# @app.route("/get_results", methods=["GET"])
+# def get_all_results():
+#     timeout = 5.0  # 最大5秒待つ
+#     poll_interval = 0.05 # チェック間隔
+#     waited = 0
+
+#     while waited < timeout:
+#         with queue_lock:
+#             if result_queue:
+#                 results_to_send = list(result_queue)
+#                 result_queue.clear()
+
+#                 response_parts = []
+#                 for rect_id, jpeg_bytes in results_to_send:
+#                     part = (
+#                         f"--myboundary\r\n"
+#                         f"Content-Type: image/jpeg\r\n"
+#                         f"Content-ID: <{rect_id}>\r\n"
+#                         f"\r\n"
+#                     ).encode("utf-8") + jpeg_bytes + b"\r\n"
+#                     response_parts.append(part)
+#                 response_parts.append(b"--myboundary--\r\n")
+#                 body = b"".join(response_parts)
+
+#                 return Response(body, status=200, headers={
+#                     "Content-Type": "multipart/mixed; boundary=myboundary"
+#                 })
+#         time.sleep(poll_interval)
+#         waited += poll_interval
+
+#     return "", 204
 
 
 if __name__ == "__main__":
