@@ -65,7 +65,10 @@ def build_prompt(caption):
 def process_image_batch(indexed_images):
     indices, images = zip(*indexed_images)
     with torch.no_grad():
-        inputs = blip_processor(images=list(images), return_tensors="pt").to(device)
+        inputs = blip_processor(images=list(images), return_tensors="pt")
+        inputs = {k: v.to(device=device, dtype=torch.float16) for k, v in inputs.items()}
+    # with torch.no_grad():
+    #     inputs = blip_processor(images=list(images), return_tensors="pt").to(device)
         generated_ids = blip_model.generate(pixel_values=inputs["pixel_values"], max_new_tokens=40)
         captions = blip_processor.batch_decode(generated_ids, skip_special_tokens=True)
 
@@ -153,29 +156,7 @@ def get_all_results():
         waited += poll_interval
 
     return "", 204
-# def get_all_results():
-#     with queue_lock:
-#         if not result_queue:
-#             print("[Server] Queue is empty")
-#             return "", 204
-#         results_to_send = list(result_queue)
-#         result_queue.clear()
 
-#     response_parts = []
-#     for rect_id, jpeg_bytes in results_to_send:
-#         part = (
-#             f"--myboundary\r\n"
-#             f"Content-Type: image/jpeg\r\n"
-#             f"Content-ID: <{rect_id}>\r\n"
-#             f"\r\n"
-#         ).encode("utf-8") + jpeg_bytes + b"\r\n"
-#         response_parts.append(part)
-#     response_parts.append(b"--myboundary--\r\n")
-#     body = b"".join(response_parts)
-
-#     return Response(body, status=200, headers={
-#         "Content-Type": "multipart/mixed; boundary=myboundary"
-#     })
 
 if __name__ == "__main__":
     init_models()
