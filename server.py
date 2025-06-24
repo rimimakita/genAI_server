@@ -104,7 +104,7 @@ def split_into_batches(indexed_images, max_batch_size=3):
 
 def async_process_and_store(id_image_pairs):
     batches = split_into_batches(id_image_pairs, max_batch_size=3)
-    with ThreadPoolExecutor(max_workers=min(len(batches), 2)) as executor:
+    with ThreadPoolExecutor(max_workers=min(len(batches), 1)) as executor:
         future_to_batch = {
             executor.submit(process_image_batch, batch): batch for batch in batches
         }
