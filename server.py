@@ -39,7 +39,8 @@ def init_models():
 
 def build_prompt(caption):
     # return f"A high-quality product image of {caption}, displayed on a plain white background with soft studio lighting. The item is centered and clearly visible, with no text, no watermark, and no packaging — just the product itself. Typical Amazon product listing style."
-    return f"{caption}, centered on a white background, no shadow, no text, no packaging."
+    return f"A product photo of {caption}, centered on a white background, no text, no shadow, no packaging."
+
 
 
 def generate_caption(image):
