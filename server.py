@@ -38,12 +38,14 @@ def init_models():
         _ = pipe(prompt=["dummy"], height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
 
 def build_prompt(caption):
-    return f"A high-quality product image of {caption}, displayed on a plain white background with soft studio lighting. The item is centered and clearly visible, with no text, no watermark, and no packaging — just the product itself. Typical Amazon product listing style."
+    # return f"A high-quality product image of {caption}, displayed on a plain white background with soft studio lighting. The item is centered and clearly visible, with no text, no watermark, and no packaging — just the product itself. Typical Amazon product listing style."
+    return f"{caption}, centered on a white background, no shadow, no text, no packaging."
+
 
 def generate_caption(image):
     with torch.no_grad():
         inputs = caption_processor(images=image, return_tensors="pt").to(device)
-        generated_ids = caption_model.generate(**inputs, max_new_tokens=40)
+        generated_ids = caption_model.generate(**inputs, max_new_tokens=30)
         return caption_processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
 def generate_images(index_caption_pairs):
