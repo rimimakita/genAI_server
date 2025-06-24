@@ -38,8 +38,13 @@ def init_models():
         _ = pipe(prompt=["dummy"], height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
 
 def build_prompt(caption):
+    if any(keyword in caption.lower() for keyword in ["text", "numbers"]):
+        prompt_caption = "object"
+    else:
+        prompt_caption = caption
+    return f"A photo of a {prompt_caption} item on a white background, centered, no text, no shadow, no packaging."
     # return f"A high-quality product image of {caption}, displayed on a plain white background with soft studio lighting. The item is centered and clearly visible, with no text, no watermark, and no packaging — just the product itself. Typical Amazon product listing style."
-    return f"A photo of a {caption} item on a white background, centered, no text, no shadow, no packaging."
+    
 
 
 
@@ -50,19 +55,6 @@ def generate_caption(image):
         generated_ids = caption_model.generate(**inputs, max_new_tokens=30)
         return caption_processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
-# def generate_images(index_caption_pairs):
-#     prompts = [build_prompt(caption) for _, caption in index_caption_pairs]
-#     with pipe_lock, torch.no_grad():
-#         images = pipe(prompt=prompts, height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
-#     results = []
-#     for (idx, _), img in zip(index_caption_pairs, images):
-#         buffer = io.BytesIO()
-#         img.save(buffer, format="JPEG")
-#         buffer.seek(0)
-#         results.append((idx, buffer.read()))
-#     with queue_lock:
-#         for item in results:
-#             result_queue.append(item)
 
 def generate_images(index_caption_pairs):
     prompts = [build_prompt(caption) for _, caption in index_caption_pairs]
@@ -164,48 +156,6 @@ def get_all_results():
     return Response(body, status=200, headers={
         "Content-Type": "multipart/mixed; boundary=myboundary"
     })
-
-
-# @app.route("/get_results", methods=["GET"])
-# def get_all_results():
-#     timeout = 5.0
-#     poll_interval = 0.05
-#     waited = 0
-#     results_to_send = []
-#     while waited < timeout:
-#         with queue_lock:
-#             if result_queue:
-#                 results_to_send = list(result_queue)
-#                 break
-#         time.sleep(poll_interval)
-#         waited += poll_interval
-
-#     if not results_to_send:
-#         return "", 204
-
-#     response_parts = []
-#     for rect_id, jpeg_bytes in results_to_send:
-#         part = (
-#             f"--myboundary\r\n"
-#             f"Content-Type: image/jpeg\r\n"
-#             f"Content-ID: <{rect_id}>\r\n"
-#             f"\r\n"
-#         ).encode("utf-8") + jpeg_bytes + b"\r\n"
-#         response_parts.append(part)
-#     response_parts.append(b"--myboundary--\r\n")
-#     body = b"".join(response_parts)
-
-#     @after_this_request
-#     def clear_sent_queue(response):
-#         with queue_lock:
-#             for item in results_to_send:
-#                 if item in result_queue:
-#                     result_queue.remove(item)
-#         return response
-
-#     return Response(body, status=200, headers={
-#         "Content-Type": "multipart/mixed; boundary=myboundary"
-#     })
 
 if __name__ == "__main__":
     init_models()
