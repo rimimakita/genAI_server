@@ -50,7 +50,9 @@ def generate_caption(image):
 def generate_images(index_caption_pairs):
     prompts = [build_prompt(caption) for _, caption in index_caption_pairs]
     with pipe_lock, torch.no_grad():
-        images = pipe(prompt=prompts, num_inference_steps=1, guidance_scale=0.0).images
+        # images = pipe(prompt=prompts, num_inference_steps=1, guidance_scale=0.0).images
+        images = pipe(prompt=prompts, height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
+
     results = []
     for (idx, _), img in zip(index_caption_pairs, images):
         buffer = io.BytesIO()
