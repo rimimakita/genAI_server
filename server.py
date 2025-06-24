@@ -3,7 +3,7 @@ from flask_cors import CORS
 from PIL import Image
 import io
 import torch
-from transformers import Blip2Processor, Blip2ForConditionalGeneration
+from transformers import AutoProcessor, AutoModelForCausalLM
 from diffusers import AutoPipelineForText2Image, DDIMScheduler
 from collections import deque
 import threading
@@ -21,38 +21,35 @@ result_queue = deque()
 queue_lock = threading.Lock()
 pipe_lock = threading.Lock()
 
-blip_processor = None
-blip_model = None
+caption_processor = None
+caption_model = None
 pipe = None
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 dtype = torch.float16
 
 def init_models():
-    global blip_processor, blip_model, pipe
-    blip_processor = Blip2Processor.from_pretrained("Salesforce/blip2-opt-2.7b", cache_dir=CACHE_DIR)
-    blip_model = Blip2ForConditionalGeneration.from_pretrained("Salesforce/blip2-opt-2.7b", torch_dtype=dtype, cache_dir=CACHE_DIR).to(device).eval()
+    global caption_processor, caption_model, pipe
+    caption_processor = AutoProcessor.from_pretrained("microsoft/git-base", cache_dir=CACHE_DIR)
+    caption_model = AutoModelForCausalLM.from_pretrained("microsoft/git-base", torch_dtype=dtype, cache_dir=CACHE_DIR).to(device).eval()
     pipe = AutoPipelineForText2Image.from_pretrained("stabilityai/sdxl-turbo", torch_dtype=dtype, variant="fp16", use_safetensors=True, cache_dir=CACHE_DIR).to(device)
     pipe.scheduler = DDIMScheduler.from_config(pipe.scheduler.config)
     with torch.no_grad():
-        _ = pipe(prompt=["dummy"], num_inference_steps=1, guidance_scale=0.0).images
+        _ = pipe(prompt=["dummy"], height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
 
 def build_prompt(caption):
     return f"A high-quality product image of {caption}, displayed on a plain white background with soft studio lighting. The item is centered and clearly visible, with no text, no watermark, and no packaging — just the product itself. Typical Amazon product listing style."
 
 def generate_caption(image):
     with torch.no_grad():
-        inputs = blip_processor(images=image, return_tensors="pt")
-        inputs = {k: v.to(device=device) for k, v in inputs.items()}
-        generated_ids = blip_model.generate(pixel_values=inputs["pixel_values"], max_new_tokens=40)
-        return blip_processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
+        inputs = caption_processor(images=image, return_tensors="pt").to(device)
+        generated_ids = caption_model.generate(**inputs, max_new_tokens=40)
+        return caption_processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
 def generate_images(index_caption_pairs):
     prompts = [build_prompt(caption) for _, caption in index_caption_pairs]
     with pipe_lock, torch.no_grad():
-        # images = pipe(prompt=prompts, num_inference_steps=1, guidance_scale=0.0).images
         images = pipe(prompt=prompts, height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
-
     results = []
     for (idx, _), img in zip(index_caption_pairs, images):
         buffer = io.BytesIO()
@@ -76,7 +73,7 @@ def async_process_and_store(decoded_images):
                 caption = future.result()
                 results.append((idx, caption))
             except Exception as e:
-                print(f"[BLIP Error] ID={idx}, Error: {e}")
+                print(f"[Caption Error] ID={idx}, Error: {e}")
     for batch in split_into_batches(results):
         generate_images(batch)
 
