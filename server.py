@@ -26,7 +26,7 @@ pipe_lock = threading.Lock()
 caption_processor = None
 caption_model = None
 pipe = None
-keywords = ["text", "numbers", "logo","wallpaper"]
+keywords = ["text", "numbers", "logo","wall"]
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 dtype = torch.float16
