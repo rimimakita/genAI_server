@@ -10,6 +10,8 @@ import threading
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import base64
+import json
 
 CACHE_DIR = "/workspace/cache"
 os.makedirs(CACHE_DIR, exist_ok=True)
@@ -110,12 +112,53 @@ def process_batch():
     threading.Thread(target=worker, args=(id_image_pairs,)).start()
     return "Accepted", 202
 
+# @app.route("/get_results", methods=["GET"])
+# def get_all_results():
+#     timeout = 5.0
+#     poll_interval = 0.05
+#     waited = 0
+#     results_to_send = []
+#     while waited < timeout:
+#         with queue_lock:
+#             if result_queue:
+#                 results_to_send = list(result_queue)
+#                 break
+#         time.sleep(poll_interval)
+#         waited += poll_interval
+
+#     if not results_to_send:
+#         return "", 204
+
+#     response_parts = []
+#     for rect_id, jpeg_bytes, caption in results_to_send:
+#         # 画像部分
+#         image_part = (
+#             f"--myboundary\r\n"
+#             f"Content-Type: image/jpeg\r\n"
+#             f"Content-ID: <{rect_id}>\r\n"
+#             f"\r\n"
+#         ).encode("utf-8") + jpeg_bytes + b"\r\n"
+
+#         # キャプション部分（text/plain）
+#         caption_part = (
+#             f"--myboundary\r\n"
+#             f"Content-Type: text/plain\r\n"
+#             f"Content-ID: <{rect_id}_caption>\r\n"
+#             f"\r\n{caption}\r\n"
+#         ).encode("utf-8")
+
+#         response_parts.extend([image_part, caption_part])
+
+#     response_parts.append(b"--myboundary--\r\n")
+#     body = b"".join(response_parts)
+
 @app.route("/get_results", methods=["GET"])
 def get_all_results():
     timeout = 5.0
     poll_interval = 0.05
     waited = 0
     results_to_send = []
+
     while waited < timeout:
         with queue_lock:
             if result_queue:
@@ -127,28 +170,30 @@ def get_all_results():
     if not results_to_send:
         return "", 204
 
-    response_parts = []
+    # JSONデータを作成
+    json_data = []
     for rect_id, jpeg_bytes, caption in results_to_send:
-        # 画像部分
-        image_part = (
-            f"--myboundary\r\n"
-            f"Content-Type: image/jpeg\r\n"
-            f"Content-ID: <{rect_id}>\r\n"
-            f"\r\n"
-        ).encode("utf-8") + jpeg_bytes + b"\r\n"
+        b64_image = base64.b64encode(jpeg_bytes).decode('utf-8')
+        json_data.append({
+            "id": rect_id,
+            "image": b64_image,
+            "caption": caption
+        })
 
-        # キャプション部分（text/plain）
-        caption_part = (
-            f"--myboundary\r\n"
-            f"Content-Type: text/plain\r\n"
-            f"Content-ID: <{rect_id}_caption>\r\n"
-            f"\r\n{caption}\r\n"
-        ).encode("utf-8")
+    # 送信済みキューから削除
+    @after_this_request
+    def clear_sent_queue(response):
+        with queue_lock:
+            for item in results_to_send:
+                if item in result_queue:
+                    result_queue.remove(item)
+        return response
 
-        response_parts.extend([image_part, caption_part])
-
-    response_parts.append(b"--myboundary--\r\n")
-    body = b"".join(response_parts)
+    return Response(
+        json.dumps(json_data),
+        status=200,
+        mimetype="application/json"
+    )
 
     @after_this_request
     def clear_sent_queue(response):
