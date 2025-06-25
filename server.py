@@ -24,6 +24,7 @@ pipe_lock = threading.Lock()
 caption_processor = None
 caption_model = None
 pipe = None
+keywords = ["text", "numbers", "logo"]
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 dtype = torch.float16
@@ -38,11 +39,15 @@ def init_models():
         _ = pipe(prompt=["dummy"], height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
 
 def build_prompt(caption):
-    if any(keyword in caption.lower() for keyword in ["text", "numbers"]):
-        prompt_caption = "object"
-    else:
-        prompt_caption = caption
+    prompt_caption = caption
+    for kw in keywords:
+        prompt_caption = prompt_caption.replace(kw, "object").replace(kw.capitalize(), "object")
     return f"A photo of a {prompt_caption} item on a white background, centered, no text, no shadow, no packaging."
+    # if any(keyword in caption.lower() for keyword in ["text", "numbers"]):
+    #     prompt_caption = "object"
+    # else:
+    #     prompt_caption = caption
+    # return f"A photo of a {prompt_caption} item on a white background, centered, no text, no shadow, no packaging."
     # return f"A high-quality product image of {caption}, displayed on a plain white background with soft studio lighting. The item is centered and clearly visible, with no text, no watermark, and no packaging — just the product itself. Typical Amazon product listing style."
     
 
@@ -59,7 +64,7 @@ def generate_caption(image):
 def generate_images(index_caption_pairs):
     prompts = [build_prompt(caption) for _, caption in index_caption_pairs]
     with pipe_lock, torch.no_grad():
-        images = pipe(prompt=prompts, height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
+        images = pipe(prompt=prompts, height=512, width=512, num_inference_steps=1, guidance_scale=0.0).images
     results = []
     for (idx, caption), img in zip(index_caption_pairs, images):
         buffer = io.BytesIO()
