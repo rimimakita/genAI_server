@@ -195,17 +195,17 @@ def get_all_results():
         mimetype="application/json"
     )
 
-    @after_this_request
-    def clear_sent_queue(response):
-        with queue_lock:
-            for item in results_to_send:
-                if item in result_queue:
-                    result_queue.remove(item)
-        return response
+    # @after_this_request
+    # def clear_sent_queue(response):
+    #     with queue_lock:
+    #         for item in results_to_send:
+    #             if item in result_queue:
+    #                 result_queue.remove(item)
+    #     return response
 
-    return Response(body, status=200, headers={
-        "Content-Type": "multipart/mixed; boundary=myboundary"
-    })
+    # return Response(body, status=200, headers={
+    #     "Content-Type": "multipart/mixed; boundary=myboundary"
+    # })
 
 if __name__ == "__main__":
     init_models()
