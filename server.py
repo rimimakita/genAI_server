@@ -33,7 +33,11 @@ dtype = torch.float16
 
 def init_models():
     global caption_processor, caption_model, pipe
-    caption_processor = BlipProcessor.from_pretrained("Salesforce/blip2-opt-2.7b", cache_dir=CACHE_DIR)
+    caption_processor = BlipProcessor.from_pretrained(
+        "Salesforce/blip2-opt-2.7b", 
+        cache_dir=CACHE_DIR,
+        use_fast=False  # ← ここを追加！
+    )
     caption_model = BlipForConditionalGeneration.from_pretrained(
         "Salesforce/blip2-opt-2.7b",
         torch_dtype=dtype,
