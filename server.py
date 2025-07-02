@@ -4,6 +4,7 @@ from PIL import Image
 import io
 import torch
 from transformers import BlipProcessor, BlipForConditionalGeneration
+from transformers import AutoProcessor
 from diffusers import AutoPipelineForText2Image, DDIMScheduler
 from collections import deque
 import threading
@@ -33,7 +34,7 @@ dtype = torch.float16
 
 def init_models():
     global caption_processor, caption_model, pipe
-    caption_processor = BlipProcessor.from_pretrained(
+    caption_processor = AutoProcessor.from_pretrained(
         "Salesforce/blip2-opt-2.7b", 
         cache_dir=CACHE_DIR,
         use_fast=False  # ← ここを追加！
