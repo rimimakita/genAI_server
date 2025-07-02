@@ -54,17 +54,23 @@ def init_models():
     pipe.scheduler = DDIMScheduler.from_config(pipe.scheduler.config)
     with torch.no_grad():
         _ = pipe(prompt=["dummy"], height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
-
+        
+def build_prompt(caption):
     prompt_caption = caption
     for kw in keywords:
         prompt_caption = prompt_caption.replace(kw, "object").replace(kw.capitalize(), "object")
     return f"A photo of a {prompt_caption} item on a white background, centered, no text, no shadow, no packaging."
-
+# def generate_caption(image):
+#     with torch.no_grad():
+#         inputs = caption_processor(images=image, return_tensors="pt").to(device)
+#         generated_ids = caption_model.generate(**inputs, max_new_tokens=30)
+#         caption = caption_processor.decode(generated_ids[0], skip_special_tokens=True)
+#         return caption.strip()
 def generate_caption(image):
     with torch.no_grad():
-        inputs = caption_processor(images=image, return_tensors="pt").to(device)
+        inputs = caption_processor(images=image, text="Describe this image in detail.", return_tensors="pt").to(device)
         generated_ids = caption_model.generate(**inputs, max_new_tokens=30)
-        caption = caption_processor.decode(generated_ids[0], skip_special_tokens=True)
+        caption = caption_processor.tokenizer.decode(generated_ids[0], skip_special_tokens=True)
         return caption.strip()
 
 def generate_images(index_caption_pairs):
