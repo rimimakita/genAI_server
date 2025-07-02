@@ -3,8 +3,7 @@ from flask_cors import CORS
 from PIL import Image
 import io
 import torch
-from transformers import BlipProcessor, BlipForConditionalGeneration
-from transformers import AutoProcessor
+from transformers import AutoProcessor, Blip2ForConditionalGeneration
 from diffusers import AutoPipelineForText2Image, DDIMScheduler
 from collections import deque
 import threading
@@ -39,7 +38,7 @@ def init_models():
         cache_dir=CACHE_DIR,
         use_fast=False  # ← ここを追加！
     )
-    caption_model = BlipForConditionalGeneration.from_pretrained(
+    caption_model = Blip2ForConditionalGeneration.from_pretrained(
         "Salesforce/blip2-opt-2.7b",
         torch_dtype=dtype,
         device_map="auto",
