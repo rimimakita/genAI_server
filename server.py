@@ -68,11 +68,10 @@ def build_prompt(caption):
 #         return caption.strip()
 def generate_caption(image):
     with torch.no_grad():
-        inputs = caption_processor(images=image, text="Describe this image in detail.", return_tensors="pt").to(device)
+        inputs = caption_processor(images=image, return_tensors="pt").to(device)
         generated_ids = caption_model.generate(**inputs, max_new_tokens=30)
         caption = caption_processor.tokenizer.decode(generated_ids[0], skip_special_tokens=True)
         return caption.strip()
-
 def generate_images(index_caption_pairs):
     prompts = [build_prompt(caption) for _, caption in index_caption_pairs]
     with pipe_lock, torch.no_grad():
