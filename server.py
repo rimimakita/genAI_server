@@ -3,7 +3,7 @@ from flask_cors import CORS
 from PIL import Image
 import io
 import torch
-from transformers import AutoProcessor, AutoModelForCausalLM
+from transformers import BlipProcessor, BlipForConditionalGeneration
 from diffusers import AutoPipelineForText2Image, DDIMScheduler
 from collections import deque
 import threading
@@ -33,35 +33,35 @@ dtype = torch.float16
 
 def init_models():
     global caption_processor, caption_model, pipe
-    caption_processor = AutoProcessor.from_pretrained("microsoft/git-base", cache_dir=CACHE_DIR)
-    caption_model = AutoModelForCausalLM.from_pretrained("microsoft/git-base", torch_dtype=dtype, cache_dir=CACHE_DIR).to(device).eval()
-    pipe = AutoPipelineForText2Image.from_pretrained("stabilityai/sdxl-turbo", torch_dtype=dtype, variant="fp16", use_safetensors=True, cache_dir=CACHE_DIR).to(device)
+    caption_processor = BlipProcessor.from_pretrained("Salesforce/blip2-opt-2.7b", cache_dir=CACHE_DIR)
+    caption_model = BlipForConditionalGeneration.from_pretrained(
+        "Salesforce/blip2-opt-2.7b",
+        torch_dtype=dtype,
+        device_map="auto",
+        cache_dir=CACHE_DIR
+    ).eval()
+    pipe = AutoPipelineForText2Image.from_pretrained(
+        "stabilityai/sdxl-turbo",
+        torch_dtype=dtype,
+        variant="fp16",
+        use_safetensors=True,
+        cache_dir=CACHE_DIR
+    ).to(device)
     pipe.scheduler = DDIMScheduler.from_config(pipe.scheduler.config)
     with torch.no_grad():
         _ = pipe(prompt=["dummy"], height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
 
-def build_prompt(caption):
     prompt_caption = caption
     for kw in keywords:
         prompt_caption = prompt_caption.replace(kw, "object").replace(kw.capitalize(), "object")
     return f"A photo of a {prompt_caption} item on a white background, centered, no text, no shadow, no packaging."
-    # if any(keyword in caption.lower() for keyword in ["text", "numbers"]):
-    #     prompt_caption = "object"
-    # else:
-    #     prompt_caption = caption
-    # return f"A photo of a {prompt_caption} item on a white background, centered, no text, no shadow, no packaging."
-    # return f"A high-quality product image of {caption}, displayed on a plain white background with soft studio lighting. The item is centered and clearly visible, with no text, no watermark, and no packaging — just the product itself. Typical Amazon product listing style."
-    
-
-
-
 
 def generate_caption(image):
     with torch.no_grad():
         inputs = caption_processor(images=image, return_tensors="pt").to(device)
         generated_ids = caption_model.generate(**inputs, max_new_tokens=30)
-        return caption_processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
-
+        caption = caption_processor.decode(generated_ids[0], skip_special_tokens=True)
+        return caption.strip()
 
 def generate_images(index_caption_pairs):
     prompts = [build_prompt(caption) for _, caption in index_caption_pairs]
@@ -112,45 +112,6 @@ def process_batch():
     threading.Thread(target=worker, args=(id_image_pairs,)).start()
     return "Accepted", 202
 
-# @app.route("/get_results", methods=["GET"])
-# def get_all_results():
-#     timeout = 5.0
-#     poll_interval = 0.05
-#     waited = 0
-#     results_to_send = []
-#     while waited < timeout:
-#         with queue_lock:
-#             if result_queue:
-#                 results_to_send = list(result_queue)
-#                 break
-#         time.sleep(poll_interval)
-#         waited += poll_interval
-
-#     if not results_to_send:
-#         return "", 204
-
-#     response_parts = []
-#     for rect_id, jpeg_bytes, caption in results_to_send:
-#         # 画像部分
-#         image_part = (
-#             f"--myboundary\r\n"
-#             f"Content-Type: image/jpeg\r\n"
-#             f"Content-ID: <{rect_id}>\r\n"
-#             f"\r\n"
-#         ).encode("utf-8") + jpeg_bytes + b"\r\n"
-
-#         # キャプション部分（text/plain）
-#         caption_part = (
-#             f"--myboundary\r\n"
-#             f"Content-Type: text/plain\r\n"
-#             f"Content-ID: <{rect_id}_caption>\r\n"
-#             f"\r\n{caption}\r\n"
-#         ).encode("utf-8")
-
-#         response_parts.extend([image_part, caption_part])
-
-#     response_parts.append(b"--myboundary--\r\n")
-#     body = b"".join(response_parts)
 
 @app.route("/get_results", methods=["GET"])
 def get_all_results():
@@ -195,17 +156,6 @@ def get_all_results():
         mimetype="application/json"
     )
 
-    # @after_this_request
-    # def clear_sent_queue(response):
-    #     with queue_lock:
-    #         for item in results_to_send:
-    #             if item in result_queue:
-    #                 result_queue.remove(item)
-    #     return response
-
-    # return Response(body, status=200, headers={
-    #     "Content-Type": "multipart/mixed; boundary=myboundary"
-    # })
 
 if __name__ == "__main__":
     init_models()
