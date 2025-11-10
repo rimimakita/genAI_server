@@ -24,9 +24,6 @@ queue_lock = threading.Lock()
 pipe_lock = threading.Lock()
 
 pipe = None
-# 以前の keywords は build_prompt での置換用途でしたが、
-# 今回は caption 自体がランダム語句なので置換は基本不要です。
-keywords = ["text", "numbers", "logo", "wall"]
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 dtype = torch.float16
@@ -44,28 +41,20 @@ def init_models():
     with torch.no_grad():
         _ = pipe(prompt=["dummy"], height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
 
-def build_prompt(caption):
-    # 旧ロジックを残しつつ、ランダム語句をそのまま使う
-    prompt_caption = caption
-    for kw in keywords:
-        prompt_caption = prompt_caption.replace(kw, "object").replace(kw.capitalize(), "object")
-    return f"A photo of a {prompt_caption} item on a white background, centered, no text, no shadow, no packaging."
-
 # ランダム語彙
 ADJECTIVES = ["red","blue","green","yellow","wooden","metal","ceramic","plastic",
-              "textured","smooth","vintage","modern","minimal","round","square"]
+              "smooth","vintage","modern","minimal","round","square"]
 NOUNS = ["mug","bottle","book","box","plant","vase","clock","jar","wallet","bag",
          "shoe","hat","bowl","plate","toy","candle","remote","keyboard","mouse",
          "camera","phone","pen","notebook","spoon","fork","cup","watch","lamp"]
 
-def random_caption_from_seed(seed=None):
+def generate_random_caption(seed=None):
     rnd = random.Random(seed) if seed is not None else random
     return f"{rnd.choice(ADJECTIVES)} {rnd.choice(NOUNS)}"
 
-def generate_caption(image):
-    # 画像は無視し、ランダム語句を返す
-    # 同じIDごとに固定したければ seed を渡す実装側で制御
-    return random_caption_from_seed()
+def build_prompt(caption):
+    return f"A photo of a {caption} item on a white background, centered, no text, no shadow, no packaging."
+
 
 def generate_images(index_caption_pairs):
     prompts = [build_prompt(caption) for _, caption in index_caption_pairs]
@@ -89,7 +78,7 @@ def async_process_and_store(decoded_images):
     results = []
     for idx, _img in decoded_images:
         # 再現性が欲しければ seed=hash(idx) にする
-        caption = random_caption_from_seed(seed=hash(idx))
+        caption = generate_random_caption()
         results.append((idx, caption))
     for batch in split_into_batches(results):
         generate_images(batch)
