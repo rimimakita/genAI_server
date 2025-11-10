@@ -54,10 +54,12 @@ NOUNS = [
     "towel","charger","cable","headphones","soap","pillow"
 ]
 
-def generate_random_caption(seed=None):
-    rnd = random.Random(seed) if seed is not None else random
-    return rnd.choice(NOUNS)
-
+# def generate_random_caption(seed=None):
+#     rnd = random.Random(seed) if seed is not None else random
+#     return rnd.choice(NOUNS)
+def generate_random_caption(seed=None): 
+    rnd = random.Random(seed) if seed is not None else random 
+    return f"{rnd.choice(ADJECTIVES)} {rnd.choice(NOUNS)}"
 
 def build_prompt(caption):
     return f"A photo of a {caption} item on a white background, centered, no text, no shadow, no packaging."
