@@ -44,13 +44,20 @@ def init_models():
 # ランダム語彙
 ADJECTIVES = ["red","blue","green","yellow","wooden","metal","ceramic","plastic",
               "smooth","vintage","modern","minimal","round","square"]
-NOUNS = ["mug","bottle","book","box","plant","vase","clock","jar","wallet","bag",
-         "shoe","hat","bowl","plate","toy","candle","remote","keyboard","mouse",
-         "camera","phone","pen","notebook","spoon","fork","cup","watch","lamp"]
+NOUNS = [
+    "mug","bottle","book","box","plant","vase","clock","jar","wallet","bag",
+    "shoe","hat","bowl","plate","toy","candle","remote","keyboard","mouse",
+    "camera","phone","pen","notebook","spoon","fork","cup","watch","lamp",
+    # --- 食べ物（少量） ---
+    "snack","cookies","chips","chocolate","tea",
+    # --- Amazonでよく見かけるアイテム補強 ---
+    "towel","charger","cable","headphones","soap","pillow"
+]
 
 def generate_random_caption(seed=None):
     rnd = random.Random(seed) if seed is not None else random
-    return f"{rnd.choice(ADJECTIVES)} {rnd.choice(NOUNS)}"
+    return rnd.choice(NOUNS)
+
 
 def build_prompt(caption):
     return f"A photo of a {caption} item on a white background, centered, no text, no shadow, no packaging."
