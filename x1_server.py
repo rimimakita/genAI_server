@@ -74,24 +74,74 @@ def generate_caption(image):
         generated_ids = caption_model.generate(**inputs, max_new_tokens=30)
         caption = caption_processor.tokenizer.decode(generated_ids[0], skip_special_tokens=True)
         return caption.strip()
+# def generate_images(index_caption_pairs):
+#     prompts = [build_prompt(caption) for _, caption in index_caption_pairs]
+#     with pipe_lock, torch.no_grad():
+#         images = pipe(prompt=prompts, height=512, width=512, num_inference_steps=1, guidance_scale=0.0).images
+#     results = []
+#     for (idx, caption), img in zip(index_caption_pairs, images):
+#         buffer = io.BytesIO()
+#         img.save(buffer, format="JPEG")
+#         buffer.seek(0)
+#         results.append((idx, buffer.read(), caption))  # ← キャプションも追加
+#     with queue_lock:
+#         for item in results:
+#             result_queue.append(item)
+
 def generate_images(index_caption_pairs):
+    print("[generate_images] START, num items:", len(index_caption_pairs))
     prompts = [build_prompt(caption) for _, caption in index_caption_pairs]
+    print("[generate_images] prompts:", prompts)
+
     with pipe_lock, torch.no_grad():
-        images = pipe(prompt=prompts, height=512, width=512, num_inference_steps=1, guidance_scale=0.0).images
+        images = pipe(
+            prompt=prompts,
+            height=512,
+            width=512,
+            num_inference_steps=1,
+            guidance_scale=0.0
+        ).images
+
     results = []
     for (idx, caption), img in zip(index_caption_pairs, images):
         buffer = io.BytesIO()
         img.save(buffer, format="JPEG")
         buffer.seek(0)
-        results.append((idx, buffer.read(), caption))  # ← キャプションも追加
+        jpeg_bytes = buffer.read()
+        results.append((idx, jpeg_bytes, caption))
+        print(f"[generate_images] built result for id={idx}, len={len(jpeg_bytes)}")
+
     with queue_lock:
         for item in results:
             result_queue.append(item)
+        print("[generate_images] queue size now:", len(result_queue))
+
+    print("[generate_images] END")
+
 
 def split_into_batches(indexed_list, batch_size=3):
     return [indexed_list[i:i+batch_size] for i in range(0, len(indexed_list), batch_size)]
 
+# def async_process_and_store(decoded_images):
+#     with ThreadPoolExecutor(max_workers=4) as executor:
+#         futures = {executor.submit(generate_caption, img): idx for idx, img in decoded_images}
+#         results = []
+#         for future in as_completed(futures):
+#             idx = futures[future]
+#             try:
+#                 caption = future.result()
+#                 results.append((idx, caption))
+#             except Exception as e:
+#                 print(f"[Caption Error] ID={idx}, Error: {e}")
+#     for batch in split_into_batches(results):
+#         generate_images(batch)
+
 def async_process_and_store(decoded_images):
+    print("[async] START, decoded_images:", len(decoded_images))
+    if not decoded_images:
+        print("[async] decoded_images is empty, return")
+        return
+
     with ThreadPoolExecutor(max_workers=4) as executor:
         futures = {executor.submit(generate_caption, img): idx for idx, img in decoded_images}
         results = []
@@ -99,26 +149,39 @@ def async_process_and_store(decoded_images):
             idx = futures[future]
             try:
                 caption = future.result()
+                print(f"[async] caption OK, id={idx}, caption={caption}")
                 results.append((idx, caption))
             except Exception as e:
                 print(f"[Caption Error] ID={idx}, Error: {e}")
+
+    print("[async] captions:", len(results))
     for batch in split_into_batches(results):
+        print("[async] call generate_images, batch size:", len(batch))
         generate_images(batch)
+    print("[async] END")
 
 @app.route("/process_batch", methods=["POST"])
 def process_batch():
+    print("[process_batch] START")
+    print("[process_batch] files keys:", list(request.files.keys()))
+    
     files = request.files
     id_image_pairs = [(rect_id, files[rect_id].read()) for rect_id in files]
+    print("[process_batch] id_image_pairs:", len(id_image_pairs))
 
     def worker(pairs):
+        print("[worker] START, pairs:", len(pairs))
         decoded = []
         for rect_id, raw in pairs:
             try:
                 image = Image.open(io.BytesIO(raw)).convert("RGB")
+                print("[worker] decoded:", rect_id)
                 decoded.append((rect_id, image))
             except Exception as e:
                 print(f"[Decode Error] ID={rect_id}, Error: {e}")
+        print("[worker] decoded_images:", len(decoded))
         async_process_and_store(decoded)
+        print("[worker] END")
 
     threading.Thread(target=worker, args=(id_image_pairs,)).start()
     return "Accepted", 202
