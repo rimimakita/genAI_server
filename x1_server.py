@@ -62,18 +62,22 @@ def build_prompt(caption: str) -> str:
     """
     # 必要に応じて strip だけしておく
     return caption.strip()
+    
 # def generate_caption(image):
 #     with torch.no_grad():
 #         inputs = caption_processor(images=image, return_tensors="pt").to(device)
 #         generated_ids = caption_model.generate(**inputs, max_new_tokens=30)
 #         caption = caption_processor.decode(generated_ids[0], skip_special_tokens=True)
 #         return caption.strip()
-def generate_caption(image):
-    with torch.no_grad():
-        inputs = caption_processor(images=image, return_tensors="pt").to(device)
-        generated_ids = caption_model.generate(**inputs, max_new_tokens=30)
-        caption = caption_processor.tokenizer.decode(generated_ids[0], skip_special_tokens=True)
-        return caption.strip()
+
+
+# def generate_caption(image):
+#     with torch.no_grad():
+#         inputs = caption_processor(images=image, return_tensors="pt").to(device)
+#         generated_ids = caption_model.generate(**inputs, max_new_tokens=30)
+#         caption = caption_processor.tokenizer.decode(generated_ids[0], skip_special_tokens=True)
+#         return caption.strip()
+
 # def generate_images(index_caption_pairs):
 #     prompts = [build_prompt(caption) for _, caption in index_caption_pairs]
 #     with pipe_lock, torch.no_grad():
@@ -87,6 +91,15 @@ def generate_caption(image):
 #     with queue_lock:
 #         for item in results:
 #             result_queue.append(item)
+
+def generate_caption(image):
+    with torch.no_grad():
+        inputs = caption_processor(images=image, return_tensors="pt").to(device)
+        generated_ids = caption_model.generate(**inputs, max_new_tokens=30)
+        # ★ こちら
+        caption = caption_processor.decode(generated_ids[0], skip_special_tokens=True)
+        return caption.strip()
+
 
 def generate_images(index_caption_pairs):
     print("[generate_images] START, num items:", len(index_caption_pairs))
