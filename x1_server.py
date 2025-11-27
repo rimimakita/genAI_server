@@ -57,20 +57,15 @@ def init_models():
         _ = pipe(prompt=["dummy"], height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
         
 def build_prompt(caption: str) -> str:
-    text = caption.lower().strip()
+    text = caption.strip()
 
-    # 1. "twitter" を削除
-    text = re.sub(r"\btwitter\b", "", text)
+    # 1. "twitter" を大文字小文字問わず削除
+    text = re.sub(r"twitter", "", text, flags=re.IGNORECASE)
 
-    # 2. screenshot variations -> "image"
-    screenshot_patterns = [
-        r"\bscreenshot\b",
-        r"\bscreen shot\b",
-        r"\bscreen-shot\b",
-        r"\bscreen\s+shot\b",
-    ]
-    for pat in screenshot_patterns:
-        text = re.sub(pat, "image", text)
+    # 2. "screenshot", "screen shot", "screen-shot" などを "image" に統一
+    text = re.sub(r"screens? ?shot|screen[\s-]*shot", "image", text, flags=re.IGNORECASE)
+    # 簡単にするなら：
+    # text = re.sub(r"screenshot|screen[\s-]+shot", "image", text, flags=re.IGNORECASE)
 
     # 3. 余分な空白を整形
     text = re.sub(r"\s+", " ", text).strip()
