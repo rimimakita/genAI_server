@@ -56,12 +56,25 @@ def init_models():
         _ = pipe(prompt=["dummy"], height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
         
 def build_prompt(caption: str) -> str:
-    """
-    いまはプロンプト＝キャプションにするだけ．
-    将来，何か加工を入れたくなったらこの関数の中に書き足す。
-    """
-    # 必要に応じて strip だけしておく
-    return caption.strip()
+    text = caption.lower().strip()
+
+    # 1. "twitter" を削除
+    text = re.sub(r"\btwitter\b", "", text)
+
+    # 2. screenshot variations -> "image"
+    screenshot_patterns = [
+        r"\bscreenshot\b",
+        r"\bscreen shot\b",
+        r"\bscreen-shot\b",
+        r"\bscreen\s+shot\b",
+    ]
+    for pat in screenshot_patterns:
+        text = re.sub(pat, "image", text)
+
+    # 3. 余分な空白を整形
+    text = re.sub(r"\s+", " ", text).strip()
+
+    return text
     
 def generate_images(index_caption_pairs):
     prompts = [build_prompt(caption) for _, caption in index_caption_pairs]
