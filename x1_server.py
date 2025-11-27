@@ -201,6 +201,42 @@ def process_batch():
 
 
 @app.route("/get_results", methods=["GET"])
+# def get_all_results():
+#     timeout = 5.0
+#     poll_interval = 0.05
+#     waited = 0
+#     results_to_send = []
+
+#     while waited < timeout:
+#         with queue_lock:
+#             if result_queue:
+#                 results_to_send = list(result_queue)
+#                 break
+#         time.sleep(poll_interval)
+#         waited += poll_interval
+
+#     if not results_to_send:
+#         return "", 204
+
+#     # JSONデータを作成
+#     json_data = []
+#     for rect_id, jpeg_bytes, caption in results_to_send:
+#         b64_image = base64.b64encode(jpeg_bytes).decode('utf-8')
+#         json_data.append({
+#             "id": rect_id,
+#             "image": b64_image,
+#             "caption": caption
+#         })
+
+#     # 送信済みキューから削除
+#     @after_this_request
+#     def clear_sent_queue(response):
+#         with queue_lock:
+#             for item in results_to_send:
+#                 if item in result_queue:
+#                     result_queue.remove(item)
+#         return response
+
 def get_all_results():
     timeout = 5.0
     poll_interval = 0.05
@@ -209,32 +245,37 @@ def get_all_results():
 
     while waited < timeout:
         with queue_lock:
-            if result_queue:
+            qsize = len(result_queue)
+        print(f"[get_results] waited={waited:.2f}, queue size={qsize}")
+        if qsize:
+            with queue_lock:
                 results_to_send = list(result_queue)
-                break
+            break
         time.sleep(poll_interval)
         waited += poll_interval
 
     if not results_to_send:
+        print("[get_results] NO RESULTS → 204")
         return "", 204
 
-    # JSONデータを作成
+    print("[get_results] SEND results:", len(results_to_send))
+
     json_data = []
     for rect_id, jpeg_bytes, caption in results_to_send:
         b64_image = base64.b64encode(jpeg_bytes).decode('utf-8')
         json_data.append({
             "id": rect_id,
             "image": b64_image,
-            "caption": caption
+            "caption": caption,
         })
 
-    # 送信済みキューから削除
     @after_this_request
     def clear_sent_queue(response):
         with queue_lock:
             for item in results_to_send:
                 if item in result_queue:
                     result_queue.remove(item)
+        print("[get_results] queue cleared, now size:", len(result_queue))
         return response
 
     return Response(
