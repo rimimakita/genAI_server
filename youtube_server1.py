@@ -61,21 +61,29 @@ import re
 def build_prompt(caption: str) -> str:
     text = caption.strip()
 
-    # 1. "app" を削除
+    # 1. "app" を削除（大文字小文字問わず）
     text = re.sub(r"app", "", text, flags=re.IGNORECASE)
 
-    # 2. "a phone", "the phone", "an iphone", "the iphone" などを削除
-    text = re.sub(r"\b(a|an|the)\s+(phone|iphone)\b", "", text, flags=re.IGNORECASE)
+    # 2. "a/the/an phone/iphone" (+ その後の with があればそれも) を削除
+    text = re.sub(
+        r"\b(a|an|the)\s+(phone|iphone)(\s+with)?\b",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
 
-    # 3. "screenshot", "screen shot" などを "image" に変換
+    # 3. "the word" を削除
+    text = re.sub(r"\bthe word\b", "", text, flags=re.IGNORECASE)
+
+    # 4. "screenshot", "screen shot", "screen-shot" → "image"
     text = re.sub(
         r"screens? ?shot|screen[\s-]*shot",
         "image",
         text,
-        flags=re.IGNORECASE
+        flags=re.IGNORECASE,
     )
 
-    # 4. 空白を整理
+    # 5. 余分な空白を整形
     text = re.sub(r"\s+", " ", text).strip()
 
     return text
