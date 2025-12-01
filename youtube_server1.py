@@ -69,9 +69,9 @@ def build_prompt(caption: str) -> str:
         flags=re.IGNORECASE
     )
 
-    # 2. "a/the/an phone/iphone" (+ その後の with があればそれも) を削除
+    # 2. "a/the/an phone/iphone" (+ with / + showing) を削除
     text = re.sub(
-        r"\b(a|an|the)\s+(phone|iphone)(\s+with)?\b",
+        r"\b(a|an|the)\s+(phone|iphone)(\s+(with|showing))?\b",
         "",
         text,
         flags=re.IGNORECASE,
@@ -80,9 +80,9 @@ def build_prompt(caption: str) -> str:
     # 3. "the word" を削除
     text = re.sub(r"\bthe word\b", "", text, flags=re.IGNORECASE)
 
-    # 4. "screenshot", "screen shot", "screen-shot" → "image"
+    # 4. "screenshot", "screen shot", "screen-shot", "screen" → "image"
     text = re.sub(
-        r"screens? ?shot|screen[\s-]*shot",
+        r"screens? ?shot|screen[\s-]*shot|\bscreen\b",
         "image",
         text,
         flags=re.IGNORECASE,
