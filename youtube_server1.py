@@ -61,8 +61,13 @@ import re
 def build_prompt(caption: str) -> str:
     text = caption.strip()
 
-    # 1. "app" を削除（大文字小文字問わず）
-    text = re.sub(r"app", "", text, flags=re.IGNORECASE)
+    # 1. "app" / "the app" / "an app" (+ is showing / shows / is shown) を削除
+    text = re.sub(
+        r"\b(the|an)?\s*app(\s+(is\s+showing|is\s+shown|shows))?\b",
+        "",
+        text,
+        flags=re.IGNORECASE
+    )
 
     # 2. "a/the/an phone/iphone" (+ その後の with があればそれも) を削除
     text = re.sub(
