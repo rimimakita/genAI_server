@@ -56,7 +56,7 @@ def init_models():
     with torch.no_grad():
         _ = pipe(prompt=["dummy"], height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
         
-import re
+
 
 def build_prompt(caption: str) -> str:
     text = caption.strip()
@@ -69,7 +69,10 @@ def build_prompt(caption: str) -> str:
         flags=re.IGNORECASE
     )
 
-    # 2. "a/the/an phone/iphone/smartphone" (+ with / + showing) を削除
+    # 1b. "apps" を削除（複数形）
+    text = re.sub(r"\bapps\b", "", text, flags=re.IGNORECASE)
+
+    # 2. "a/the/an phone/iphone/smartphone/cell phone" (+ with / + showing) を削除
     text = re.sub(
         r"\b(a|an|the)\s+(phone|iphone|smartphone|cell\s+phone)(\s+(with|showing))?\b",
         "",
@@ -80,15 +83,26 @@ def build_prompt(caption: str) -> str:
     # 3. "the word" を削除
     text = re.sub(r"\bthe word\b", "", text, flags=re.IGNORECASE)
 
-    # 4. "screenshot", "screen shot", "screen-shot", "screen" → "image"
+    # 4. "screenshot", "screen shot", "screen-shot", "screen", "screens" → "image"
     text = re.sub(
-        r"screens? ?shot|screen[\s-]*shot|\bscreen\b",
+        r"screens? ?shot|screen[\s-]*shot|\bscreens?\b",
         "image",
         text,
         flags=re.IGNORECASE,
     )
 
-    # 5. 余分な空白を整形
+    # 5. いったん空白を整形
+    text = re.sub(r"\s+", " ", text).strip()
+
+    # 6. 最終的に "a image showing" / "the image showing" / "a image of" を削除
+    text = re.sub(
+        r"\b(a image showing|the image showing|a image of)\b",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+
+    # 7. もう一度空白を整形
     text = re.sub(r"\s+", " ", text).strip()
 
     return text
