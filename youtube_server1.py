@@ -71,7 +71,7 @@ def build_prompt(caption: str) -> str:
 
     # 2. "a/the/an phone/iphone/smartphone" (+ with / + showing) を削除
     text = re.sub(
-        r"\b(a|an|the)\s+(phone|iphone|smartphone)(\s+(with|showing))?\b",
+        r"\b(a|an|the)\s+(phone|iphone|smartphone|cell\s+phone)(\s+(with|showing))?\b",
         "",
         text,
         flags=re.IGNORECASE,
