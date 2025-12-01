@@ -102,6 +102,13 @@ def build_prompt(caption: str) -> str:
         flags=re.IGNORECASE,
     )
 
+    # 「the different types of」を削除
+    text = re.sub(r"\bthe different types of\b", "", text, flags=re.IGNORECASE)
+
+    # 「the different」を削除
+    text = re.sub(r"\bthe different\b", "", text, flags=re.IGNORECASE)
+
+
     # 7. もう一度空白を整形
     text = re.sub(r"\s+", " ", text).strip()
 
