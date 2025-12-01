@@ -56,16 +56,18 @@ def init_models():
     with torch.no_grad():
         _ = pipe(prompt=["dummy"], height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
         
+import re
+
 def build_prompt(caption: str) -> str:
     text = caption.strip()
 
-    # 1. "app" を大文字小文字問わず削除
+    # 1. "app" を削除
     text = re.sub(r"app", "", text, flags=re.IGNORECASE)
 
-    # 2. "a phone" を削除（大文字小文字問わず）
-    text = re.sub(r"a phone", "", text, flags=re.IGNORECASE)
+    # 2. "a phone" / "the phone" / "the iphone" を削除
+    text = re.sub(r"\b(a phone|the phone|the iphone)\b", "", text, flags=re.IGNORECASE)
 
-    # 3. "screenshot", "screen shot" などを "image" に統一
+    # 3. screenshot 系 → "image"
     text = re.sub(
         r"screens? ?shot|screen[\s-]*shot",
         "image",
@@ -73,10 +75,11 @@ def build_prompt(caption: str) -> str:
         flags=re.IGNORECASE
     )
 
-    # 4. 空白を整形
+    # 4. 空白整形
     text = re.sub(r"\s+", " ", text).strip()
 
     return text
+
     
 def generate_images(index_caption_pairs):
     prompts = [build_prompt(caption) for _, caption in index_caption_pairs]
