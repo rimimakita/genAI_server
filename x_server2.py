@@ -42,44 +42,44 @@ def init_models():
         _ = pipe(prompt=["dummy"], height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
 
 # ランダム語彙
-ADJECTIVES = [
-"A clear plastic bottle of mineral water",
-"A white disposable nonwoven face mask",
-"A large white plastic container of liquid detergent",
-"A paperback book with a colorful cover design",
-"A stack of soft cotton towels",
-"A compact handheld hair removal device",
-"A pair of soft indoor slippers made of foam material",
-"A pair of thick ankle socks for cold weather",
-"A slim cosmetic eyeliner pencil with a cap",
-"A refill pouch of liquid hand soap with printed label",
-"A small blue USB flash drive",
-"A black USB-C cable with connectors on both ends",
-"A resealable pouch of whey protein powder",
-"A refill pack of liquid laundry detergent",
-"A plastic case of a video game for a handheld console",
-"A rectangular prepaid gift card with printed value"
+prompt = [
+    # Technology
+    "A clean minimalist desk with a laptop and a coffee cup under soft natural light",
+    "A modern workspace with a keyboard, wireless mouse, and a small potted plant",
+    "A close-up of a sleek smartphone on a neutral-colored desk",
+
+    # Animals / Pets
+    "A small cat resting quietly on a blanket near a sunny window",
+    "A friendly dog sitting on a wooden floor illuminated by soft daylight",
+    "A peaceful bird perched on a simple branch against a blurred green background",
+
+    # Food
+    "A neatly arranged plate of fresh fruit on a wooden table in natural morning light",
+    "A cup of coffee and a small pastry placed on a white dish in a top-down view",
+    "A clean minimal bowl of vegetable soup on a cloth napkin",
+
+    # Travel
+    "A serene lakeside landscape with mountains in the distance",
+    "A simple travel scene with a suitcase placed beside a softly lit window",
+    "A beach shoreline with gentle waves under a clear sky",
+
+    # Art / Photography
+    "A minimalist still-life arrangement of dried flowers on a plain table",
+    "A soft-focus artistic photo of light and shadow on a textured wall",
+    "A flat-lay photo of a sketchbook and pencils arranged neatly on a wooden desk"
 ]
 
-NOUNS = [
-    "mug","bottle","book","box","plant","vase","clock","jar","wallet","bag",
-    "shoe","hat","bowl","plate","toy","candle","remote","keyboard","mouse",
-    "camera","phone","pen","notebook","spoon","fork","cup","watch","lamp",
-    # --- 食べ物（少量） ---
-    "snack","cookies","chips","chocolate","tea",
-    # --- Amazonでよく見かけるアイテム補強 ---
-    "towel","charger","cable","headphones","soap","pillow"
-]
 
 def generate_random_caption(seed=None):
     rnd = random.Random(seed) if seed is not None else random
-    return rnd.choice(ADJECTIVES)
+    return rnd.choice(prompt)
 # def generate_random_caption(seed=None): 
 #     rnd = random.Random(seed) if seed is not None else random 
 #     return f"{rnd.choice(ADJECTIVES)} {rnd.choice(NOUNS)}"
 
-def build_prompt(caption):
-    return f"A photo of a {caption} item on a white background, centered, no text, no shadow, no packaging."
+def build_prompt(caption: str) -> str:
+    # ★ caption をそのまま使う
+    return caption
 
 
 def generate_images(index_caption_pairs):
