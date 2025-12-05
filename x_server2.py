@@ -57,6 +57,9 @@ prompt = [
     "A neatly arranged plate of fresh fruit on a wooden table in natural morning light",
     "A cup of coffee and a small pastry placed on a white dish in a top-down view",
     "A clean minimal plate with a small slice of cake arranged neatly on a wooden table in natural morning light",
+    "A sandwich on a wooden table with a drink beside it",
+    "A plate of cookies arranged on a white dish",
+    "A cup of tea with a small dessert on a tray",
 
     # Travel
     "A serene lakeside landscape with mountains in the distance",
@@ -69,12 +72,10 @@ prompt = [
 
     # Urban / Minimal City
     "A quiet street corner with soft morning light and minimal traffic",
-    "A minimal urban skyline with muted colors under a clear sky",
-    # Added
+    
     "A city street with buildings and pedestrians in the distance",
     "A crosswalk scene with cars and people going about their day",
     "A row of shops along a busy sidewalk",
-    "A view of an apartment building against a blue sky",
     "A small café on a street corner with outdoor seating",
     "A residential street lined with houses and parked cars",
 
