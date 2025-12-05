@@ -68,7 +68,6 @@ prompt = [
     "A road lined with buildings and trees",
 
     # Music
-    "Colorful stage lights in front of a dark background",
     "A speaker playing music in a room",
     "A corner with a guitar and music sheets",
 
@@ -98,7 +97,6 @@ prompt = [
     "A living room with books and small decorations",
 
     # Entertainment
-    "Colorful lights shining in a dark room",
     "A living room with a TV turned on",
     "A bright pattern of lights on a stage",
 
