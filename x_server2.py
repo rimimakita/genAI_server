@@ -56,16 +56,21 @@ prompt = [
     # Food
     "A neatly arranged plate of fresh fruit on a wooden table in natural morning light",
     "A cup of coffee and a small pastry placed on a white dish in a top-down view",
-    "A clean minimal bowl of vegetable soup on a cloth napkin",
+    "A clean minimal plate with a small slice of cake arranged neatly on a wooden table in natural morning light",
 
     # Travel
     "A serene lakeside landscape with mountains in the distance",
     "A simple travel scene with a suitcase placed beside a softly lit window",
     "A beach shoreline with gentle waves under a clear sky",
 
+    # Urban / Minimal City
+    "A quiet street corner with soft morning light and minimal traffic",
+    "A minimal urban skyline with muted colors under a clear sky",
+
+
     # Art / Photography
     "A minimalist still-life arrangement of dried flowers on a plain table",
-    "A soft-focus artistic photo of light and shadow on a textured wall",
+    "Soft natural light casting gentle shadows across a simple interior space",
     "A flat-lay photo of a sketchbook and pencils arranged neatly on a wooden desk"
 ]
 
