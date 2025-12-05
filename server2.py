@@ -70,11 +70,19 @@ amazon_prompts = [
     "a metal hammer with a basic handle",
     "a small gardening trowel",
 
-    # PC Software (physical equivalent)
+    # PC Software / PC-related objects
     "a USB flash drive",
 
-    # Apps & Games (physical item representation)
+    # Computers & Peripherals (expanded)
+    "a laptop with a closed lid",
+    "a simple desktop monitor",
+    "a compact wireless keyboard",
+    "a wireless mouse",
+
+    # Apps & Games / Gaming devices
     "a simple game controller",
+    "a small portable game console",
+    "a home video game console",
 
     # Toys
     "a set of wooden building blocks",
@@ -94,25 +102,19 @@ amazon_prompts = [
     "a plain shampoo bottle",
     "a white container of skincare cream",
 
-    # Computers & Peripherals
-    "a wireless mouse",
-    "a compact keyboard with a number pad",
-
     # Beauty
     "a makeup face brush",
     "a round compact mirror",
 
-    # Fashion
+    # Fashion (expanded)
     "a plain fabric tote bag",
     "a pair of simple cloth slippers",
+    "a basic short-sleeve T-shirt",
+    "a folded stack of towels",
 
     # Pet Supplies
     "a basic dog collar",
     "a toy ball for cats",
-
-    # Baby & Maternity
-    "a baby bib",
-    "a soft fabric swaddle blanket",
 
     # Home & Kitchen
     "a ceramic mug",
@@ -143,9 +145,6 @@ amazon_prompts = [
     # Musical Instruments
     "a small electronic metronome",
     "a simple recorder flute",
-
-    # Foreign Books (object equivalent)
-    "a plain-cover hardcover book",
 
     # Automotive
     "a universal smartphone holder for cars",
