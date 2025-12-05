@@ -116,7 +116,34 @@ prompt = [
     "A modern workspace with a laptop in a softly lit minimal room",
     "A close-up of electronic parts on a clean surface with soft light",
     "A futuristic but minimal tech desk setup in natural lighting",
+
+    # --- Added: Food / Café ---
+    "A neatly arranged slice of cake on a white plate in soft natural light",
+    "A cup of coffee on a wooden table with warm morning sunlight",
+    "A simple breakfast scene with toast and fruit in a bright cozy kitchen",
+    "A minimalist café interior with a small plant and sunlight through the window",
+    "A bowl of fresh fruit arranged simply on a wooden surface in gentle daylight",
+
+    # --- Added: Sky / Weather ---
+    "A calm sky with soft pastel clouds during early morning light",
+    "A gentle sunset with warm colors fading into a clear horizon",
+    "A bright blue sky with soft white clouds moving slowly",
+    "A dramatic cloudy sky with sunlight breaking through",
+
+    # --- Added: Night City ---
+    "A quiet city street at night with warm glowing streetlights",
+    "A minimal night skyline with soft reflections on wet pavement",
+    "A cozy alleyway illuminated by dim lanterns and warm tones",
+    "A distant cityscape with colorful neon lights in the evening",
+
+    # --- Added: Urban / Street Scenes ---
+    "A calm residential street with trees and warm afternoon light",
+    "A peaceful town square with soft sunlight and minimal activity",
+    "A café street with outdoor seating in gentle daylight",
+    "A quiet pedestrian walkway lined with buildings in soft morning light",
+    "A simple urban corner with shadows cast by tall buildings",
 ]
+
 
 
 
