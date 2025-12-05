@@ -58,53 +58,66 @@ def init_models():
 # =====================
 prompt = [
     # Film & Animation
-    "A simple still-life photo of film reels and a clapperboard on a clean desk",
-    "A minimal illustration-style drawing setup with sketch paper and pencils",
+    "Soft cinematic lighting in a dim room with gentle dust particles floating in the air",
+    "A simple movie-watching scene with a softly glowing screen lighting up a cozy dark room",
+    "A warm-toned filmmaking workspace with scattered storyboard papers under natural light",
 
     # Autos & Vehicles
-    "A close-up shot of a car dashboard with soft natural lighting",
-    "A quiet scene of a parked bicycle near a wall in gentle daylight",
+    "A quiet street at sunrise with a single parked car and long soft shadows",
+    "A minimal roadside scene with a bicycle leaning against a textured wall in gentle daylight",
+    "A peaceful suburban road lined with trees under soft morning light",
 
     # Music
-    "A neatly arranged set of acoustic guitar strings and a tuning device on a wooden surface",
-    "A pair of simple over-ear headphones placed on a clean white table",
+    "Soft colorful stage lights creating a calm ambient atmosphere",
+    "A cozy room with a speaker playing soft music and warm light entering from a window",
+    "A simple music practice corner with faint light and minimal instruments",
 
     # Pets & Animals
-    "A calm cat resting on a blanket beside a sunny window",
-    "A friendly small dog sitting on a wooden floor in soft daylight",
+    "A cat resting in a sunlit room with warm soft tones",
+    "A dog sitting calmly near a bright window with natural morning light",
+    "A quiet scene of a bird perched on a branch against a blurred background",
 
     # Sports
-    "A basketball resting on an empty court with warm afternoon light",
-    "A pair of clean running shoes placed neatly on a wooden floor",
+    "A quiet empty sports field with soft afternoon sunlight",
+    "A pair of running shoes near a sunlit window in a minimal room",
+    "A basketball court with warm sunset light and long shadows",
 
     # Travel & Events
-    "A scenic landscape of a quiet lakeside with mountains in the distance",
-    "A suitcase placed beside a softly lit window in a travel setting",
+    "A peaceful lakeside landscape with mountains under clear soft light",
+    "A sunlit hotel room with an open window showing a distant city view",
+    "A calm beach scene with gentle waves and a pale sky",
 
     # Gaming
-    "A minimalist photo of a game controller on a wooden desk",
-    "A clean setup with a gaming mouse and keyboard under soft light",
+    "A dimly lit gaming setup with ambient LED lighting in a cozy room",
+    "A minimalist desk with a controller beside a softly glowing monitor",
+    "A warm, inviting gaming corner with subtle colored lights",
 
     # People & Blogs
-    "A flat-lay photo of a notebook, a pen, and a cup of tea on a table",
-    "A cozy scene with a book and a soft blanket near a window",
+    "A cozy morning scene with soft window light illuminating a tidy room",
+    "A warm desk corner with tea, notebooks, and gentle daylight",
+    "A relaxed living room atmosphere with natural light and minimalist decor",
 
     # Entertainment
-    "A simple arrangement of colorful stage lights casting soft beams on a wall",
-    "A bowl of popcorn on a coffee table in front of a blank TV screen",
+    "Soft colorful ambient lights casting gentle beams in a dark room",
+    "A simple movie night scene with warm screen light reflecting in a cozy living room",
+    "A fun, colorful background pattern with blurred vibrant lights",
 
     # Howto & Style
-    "A neatly organized set of makeup brushes on a plain white cloth",
-    "A minimalist photo of folded towels and a small bottle of skincare lotion",
+    "A clean vanity table with soft daylight and organized personal items",
+    "A minimal workspace with neatly arranged tools under natural light",
+    "A cozy room scene with fabrics and accessories in warm sunlight",
 
     # Education
-    "A flat-lay of an open notebook with pencils on a clean wooden desk",
-    "A stack of simple textbooks on a plain table in soft daylight",
+    "A quiet study desk with open books and natural afternoon light",
+    "A clean workspace with stationery and gentle soft shadows",
+    "A simple chalkboard scene with warm ambient lighting",
 
     # Science & Technology
-    "A clean workspace with a laptop, a notebook, and gentle natural light",
-    "A close-up of electronic components arranged neatly on a desk",
+    "A modern workspace with a laptop in a softly lit minimal room",
+    "A close-up of electronic parts on a clean surface with soft light",
+    "A futuristic but minimal tech desk setup in natural lighting",
 ]
+
 
 
 def generate_random_caption(seed=None):
