@@ -87,12 +87,10 @@ prompt = [
     # Art / Photography
     "A minimalist still-life arrangement of dried flowers on a plain table",
     "Soft natural light casting gentle shadows across a simple interior space",
-    "A flat-lay photo of a sketchbook and pencils arranged neatly on a wooden desk",
-
-    # Added Abstract / Mood
-    "Colorful lights shining in a dark space",
-    "A gradient sky transitioning from blue to orange behind buildings"
+    "A flat-lay photo of a sketchbook and pencils arranged neatly on a wooden desk"
 ]
+
+   
 
 
 def generate_random_caption(seed=None):
