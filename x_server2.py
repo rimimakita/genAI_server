@@ -62,16 +62,35 @@ prompt = [
     "A serene lakeside landscape with mountains in the distance",
     "A simple travel scene with a suitcase placed beside a softly lit window",
     "A beach shoreline with gentle waves under a clear sky",
+    # Added
+    "A city skyline viewed from across a river",
+    "A wide landscape with distant hills and open fields",
+    "A coastal walkway with the ocean stretching into the horizon",
 
     # Urban / Minimal City
     "A quiet street corner with soft morning light and minimal traffic",
     "A minimal urban skyline with muted colors under a clear sky",
+    # Added
+    "A city street with buildings and pedestrians in the distance",
+    "A crosswalk scene with cars and people going about their day",
+    "A row of shops along a busy sidewalk",
+    "A view of an apartment building against a blue sky",
+    "A small café on a street corner with outdoor seating",
+    "A residential street lined with houses and parked cars",
 
+    # Indoor / Lifestyle
+    "A tidy room with sunlight coming through the window",
+    "A shelf with books, plants, and small decorations",
+    "A wooden table beside a window with light coming in",
 
     # Art / Photography
     "A minimalist still-life arrangement of dried flowers on a plain table",
     "Soft natural light casting gentle shadows across a simple interior space",
-    "A flat-lay photo of a sketchbook and pencils arranged neatly on a wooden desk"
+    "A flat-lay photo of a sketchbook and pencils arranged neatly on a wooden desk",
+
+    # Added Abstract / Mood
+    "Colorful lights shining in a dark space",
+    "A gradient sky transitioning from blue to orange behind buildings"
 ]
 
 
