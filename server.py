@@ -57,6 +57,9 @@ def init_models():
         
 def build_prompt(caption):
     prompt_caption = caption
+    # --- 追加：screenshot → image に置換 ---
+    prompt_caption = re.sub(r"screenshot", "image", prompt_caption, flags=re.IGNORECASE)
+
     for kw in keywords:
         prompt_caption = prompt_caption.replace(kw, "object").replace(kw.capitalize(), "object")
     return f"A photo of a {prompt_caption} item on a white background, centered, no text, no shadow, no packaging."
