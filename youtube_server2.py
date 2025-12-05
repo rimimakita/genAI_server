@@ -58,90 +58,90 @@ def init_models():
 # =====================
 prompt = [
     # Film & Animation
-    "Soft cinematic lighting in a dim room with gentle dust particles floating in the air",
-    "A simple movie-watching scene with a softly glowing screen lighting up a cozy dark room",
-    "A warm-toned filmmaking workspace with scattered storyboard papers under natural light",
+    "A movie screen glowing in a dark room",
+    "A desk with storyboard papers and film equipment",
+    "Lights and shadows in a small filming studio",
 
     # Autos & Vehicles
-    "A quiet street at sunrise with a single parked car and long soft shadows",
-    "A minimal roadside scene with a bicycle leaning against a textured wall in gentle daylight",
-    "A peaceful suburban road lined with trees under soft morning light",
+    "A car parked on a city street in the morning",
+    "A bicycle beside a wall on a sidewalk",
+    "A road lined with buildings and trees",
 
     # Music
-    "Soft colorful stage lights creating a calm ambient atmosphere",
-    "A cozy room with a speaker playing soft music and warm light entering from a window",
-    "A simple music practice corner with faint light and minimal instruments",
+    "Colorful stage lights in front of a dark background",
+    "A speaker playing music in a room",
+    "A corner with a guitar and music sheets",
 
     # Pets & Animals
-    "A cat resting in a sunlit room with warm soft tones",
-    "A dog sitting calmly near a bright window with natural morning light",
-    "A quiet scene of a bird perched on a branch against a blurred background",
+    "A cat lying on a bed near a window",
+    "A dog sitting in a bright room",
+    "A bird perched on a branch",
 
     # Sports
-    "A quiet empty sports field with soft afternoon sunlight",
-    "A pair of running shoes near a sunlit window in a minimal room",
-    "A basketball court with warm sunset light and long shadows",
+    "A basketball on an outdoor court",
+    "Running shoes near a window",
+    "An empty sports field",
 
     # Travel & Events
-    "A peaceful lakeside landscape with mountains under clear soft light",
-    "A sunlit hotel room with an open window showing a distant city view",
-    "A calm beach scene with gentle waves and a pale sky",
+    "A lake with mountains in the background",
+    "A hotel room with a window showing a city view",
+    "A beach with waves rolling onto the sand",
 
     # Gaming
-    "A dimly lit gaming setup with ambient LED lighting in a cozy room",
-    "A minimalist desk with a controller beside a softly glowing monitor",
-    "A warm, inviting gaming corner with subtle colored lights",
+    "A gaming desk with a monitor and controller",
+    "A computer setup with LED lights",
+    "A gaming corner with a keyboard and mouse",
 
     # People & Blogs
-    "A cozy morning scene with soft window light illuminating a tidy room",
-    "A warm desk corner with tea, notebooks, and gentle daylight",
-    "A relaxed living room atmosphere with natural light and minimalist decor",
+    "A morning scene inside a bright room",
+    "A desk with a notebook and a cup of tea",
+    "A living room with books and small decorations",
 
     # Entertainment
-    "Soft colorful ambient lights casting gentle beams in a dark room",
-    "A simple movie night scene with warm screen light reflecting in a cozy living room",
-    "A fun, colorful background pattern with blurred vibrant lights",
+    "Colorful lights shining in a dark room",
+    "A living room with a TV turned on",
+    "A bright pattern of lights on a stage",
 
     # Howto & Style
-    "A clean vanity table with soft daylight and organized personal items",
-    "A minimal workspace with neatly arranged tools under natural light",
-    "A cozy room scene with fabrics and accessories in warm sunlight",
+    "A table with makeup items arranged neatly",
+    "A workspace with tools on a table",
+    "A room with clothing and accessories on a chair",
 
     # Education
-    "A quiet study desk with open books and natural afternoon light",
-    "A clean workspace with stationery and gentle soft shadows",
-    "A simple chalkboard scene with warm ambient lighting",
+    "A study desk with books and stationery",
+    "A table with notebooks and pencils",
+    "A chalkboard with writing",
 
     # Science & Technology
-    "A modern workspace with a laptop in a softly lit minimal room",
-    "A close-up of electronic parts on a clean surface with soft light",
-    "A futuristic but minimal tech desk setup in natural lighting",
+    "A desk with a laptop and cables",
+    "Electronic parts arranged on a table",
+    "A modern workspace with a computer",
 
-    # --- Added: Food / Café ---
-    "A neatly arranged slice of cake on a white plate in soft natural light",
-    "A cup of coffee on a wooden table with warm morning sunlight",
-    "A simple breakfast scene with toast and fruit in a bright cozy kitchen",
-    "A minimalist café interior with a small plant and sunlight through the window",
-    "A bowl of fresh fruit arranged simply on a wooden surface in gentle daylight",
+    # Food / Café
+    "A slice of cake on a plate in a café",
+    "A cup of coffee on a table by a window",
+    "Fruit and bread arranged on a breakfast table",
+    "The inside of a café with tables and chairs",
+    "A table with fresh fruit and a drink",
 
-    # --- Added: Sky / Weather ---
-    "A calm sky with soft pastel clouds during early morning light",
-    "A gentle sunset with warm colors fading into a clear horizon",
-    "A bright blue sky with soft white clouds moving slowly",
-    "A dramatic cloudy sky with sunlight breaking through",
+    # Sky + City（空だけを避ける）
+    "A blue sky above city buildings",
+    "Clouds over a row of houses",
+    "A sunset behind an urban skyline",
+    "A sky with scattered clouds above a shopping street",
 
-    # --- Added: Night City ---
-    "A quiet city street at night with warm glowing streetlights",
-    "A minimal night skyline with soft reflections on wet pavement",
-    "A cozy alleyway illuminated by dim lanterns and warm tones",
-    "A distant cityscape with colorful neon lights in the evening",
+    # Night City
+    "A city street at night with bright signs",
+    "Buildings lit up at night",
+    "Neon lights glowing in a busy area",
+    "A quiet alley with streetlights at night",
 
-    # --- Added: Urban / Street Scenes ---
-    "A calm residential street with trees and warm afternoon light",
-    "A peaceful town square with soft sunlight and minimal activity",
-    "A café street with outdoor seating in gentle daylight",
-    "A quiet pedestrian walkway lined with buildings in soft morning light",
-    "A simple urban corner with shadows cast by tall buildings",
+    # Urban / Street Scenes
+    "A residential street with houses and trees",
+    "A town square with shops and people walking",
+    "A café street with outdoor seating",
+    "A pedestrian walkway between buildings",
+    "A corner of a city street with storefronts",
 ]
 
 
