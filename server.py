@@ -12,6 +12,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import base64
 import json
+import re
 
 CACHE_DIR = "/workspace/cache"
 os.makedirs(CACHE_DIR, exist_ok=True)
