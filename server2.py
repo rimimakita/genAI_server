@@ -61,19 +61,105 @@ ADJECTIVES = [
 "A rectangular prepaid gift card with printed value"
 ]
 
-NOUNS = [
-    "mug","bottle","book","box","plant","vase","clock","jar","wallet","bag",
-    "shoe","hat","bowl","plate","toy","candle","remote","keyboard","mouse",
-    "camera","phone","pen","notebook","spoon","fork","cup","watch","lamp",
-    # --- 食べ物（少量） ---
-    "snack","cookies","chips","chocolate","tea",
-    # --- Amazonでよく見かけるアイテム補強 ---
-    "towel","charger","cable","headphones","soap","pillow"
+amazon_prompts = [
+    # Amazon Devices & Accessories
+    "a simple protective case for a tablet",
+    "a plain protective film for a smartphone",
+
+    # DIY, Tools & Garden
+    "a metal hammer with a basic handle",
+    "a small gardening trowel",
+
+    # PC Software (physical equivalent)
+    "a USB flash drive",
+
+    # Apps & Games (physical item representation)
+    "a simple game controller",
+
+    # Toys
+    "a set of wooden building blocks",
+    "a small rubber ball",
+
+    # Gift Cards
+    "a plain plastic gift card",
+
+    # Sports & Outdoors
+    "an inflated sports ball",
+    "a lightweight collapsible water bottle",
+
+    # Digital Music (physical representation)
+    "a pair of black over-ear headphones",
+
+    # Drugstore
+    "a plain shampoo bottle",
+    "a white container of skincare cream",
+
+    # Computers & Peripherals
+    "a wireless mouse",
+    "a compact keyboard with a number pad",
+
+    # Beauty
+    "a makeup face brush",
+    "a round compact mirror",
+
+    # Fashion
+    "a plain fabric tote bag",
+    "a pair of simple cloth slippers",
+
+    # Pet Supplies
+    "a basic dog collar",
+    "a toy ball for cats",
+
+    # Baby & Maternity
+    "a baby bib",
+    "a soft fabric swaddle blanket",
+
+    # Home & Kitchen
+    "a ceramic mug",
+    "a wooden cutting board",
+
+    # Hobby
+    "a set of drawing pencils",
+    "a small brush for model building",
+
+    # Music
+    "a set of acoustic guitar strings",
+
+    # Large Appliances (safe items only)
+    "a small electric kettle",
+    "a household table fan",
+
+    # Electronics & Cameras
+    "a simple digital camera",
+    "a small desk lamp",
+
+    # Office Supplies
+    "a notebook and a ballpoint pen",
+    "a set of metal paper clips",
+
+    # Books
+    "a thick book with a plain cover",
+
+    # Musical Instruments
+    "a small electronic metronome",
+    "a simple recorder flute",
+
+    # Foreign Books (object equivalent)
+    "a plain-cover hardcover book",
+
+    # Automotive
+    "a universal smartphone holder for cars",
+    "a small helmet bag for motorcycles",
+
+    # Food, Drinks & Alcohol
+    "a clear bottle of mineral water",
+    "a pack of individually wrapped snacks"
 ]
+
 
 def generate_random_caption(seed=None):
     rnd = random.Random(seed) if seed is not None else random
-    return rnd.choice(ADJECTIVES)
+    return rnd.choice(amazon_prompts)
 # def generate_random_caption(seed=None): 
 #     rnd = random.Random(seed) if seed is not None else random 
 #     return f"{rnd.choice(ADJECTIVES)} {rnd.choice(NOUNS)}"
