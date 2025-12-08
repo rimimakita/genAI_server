@@ -85,7 +85,7 @@ def generate_images(index_caption_pairs):
         buffer = io.BytesIO()
         img.save(buffer, format="JPEG")
         buffer.seek(0)
-        results.append((idx, buffer.read(), prompts))  # ← キャプションも追加
+        results.append((idx, buffer.read(), prompt))  # ← キャプションも追加
     with queue_lock:
         for item in results:
             result_queue.append(item)
