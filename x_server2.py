@@ -44,51 +44,49 @@ def init_models():
 # ランダム語彙
 prompt = [
     # Technology
-    "A clean minimalist desk with a laptop and a coffee cup under soft natural light",
-    "A modern workspace with a keyboard, wireless mouse, and a small potted plant",
-    "A close-up of a sleek smartphone on a neutral-colored desk",
+    "A desk with a laptop and a coffee cup",
+    "A workspace with a keyboard, a wireless mouse, and a small plant",
+    "A smartphone placed on a desk",
 
     # Animals / Pets
-    "A small cat resting quietly on a blanket near a sunny window",
-    "A friendly dog sitting on a wooden floor illuminated by soft daylight",
-    "A peaceful bird perched on a simple branch against a blurred green background",
+    "A cat on a blanket near a window",
+    "A dog sitting on the floor",
+    "A bird perched on a branch",
 
     # Food
-    "A neatly arranged plate of fresh fruit on a wooden table in natural morning light",
-    "A cup of coffee and a small pastry placed on a white dish in a top-down view",
-    "A clean minimal plate with a small slice of cake arranged neatly on a wooden table in natural morning light",
-    "A sandwich on a wooden table with a drink beside it",
-    "A plate of cookies arranged on a white dish",
-    "A cup of tea with a small dessert on a tray",
+    "A plate of fresh fruit on a wooden table",
+    "A cup of coffee and a pastry on a plate",
+    "A slice of cake on a white plate on a table",
+    "A sandwich and a drink on a table",
+    "A plate of cookies on a white dish",
+    "A cup of tea with a dessert on a tray",
 
     # Travel
-    "A serene lakeside landscape with mountains in the distance",
-    "A simple travel scene with a suitcase placed beside a softly lit window",
-    "A beach shoreline with gentle waves under a clear sky",
-    # Added
-    "A city skyline viewed from across a river",
-    "A wide landscape with distant hills and open fields",
-    "A coastal walkway with the ocean stretching into the horizon",
+    "A lakeside landscape with mountains",
+    "A suitcase placed near a window",
+    "A beach with waves and a clear sky",
+    "A city skyline across a river",
+    "A landscape with hills and open fields",
+    "A coastal walkway along the ocean",
 
-    # Urban / Minimal City
-    "A quiet street corner with soft morning light and minimal traffic",
-    
-    "A city street with buildings and pedestrians in the distance",
-    "A crosswalk scene with cars and people going about their day",
-    "A row of shops along a busy sidewalk",
-    "A small café on a street corner with outdoor seating",
-    "A residential street lined with houses and parked cars",
+    # Urban / City
+    "A street with buildings and pedestrians",
+    "A crosswalk with cars and people",
+    "A row of shops along a sidewalk",
+    "A cafe on a street corner with outdoor seating",
+    "A residential street with houses and parked cars",
 
     # Indoor / Lifestyle
-    "A tidy room with sunlight coming through the window",
-    "A shelf with books, plants, and small decorations",
-    "A wooden table beside a window with light coming in",
+    "A room with a window and furniture",
+    "A shelf with books and decorations",
+    "A wooden table beside a window",
 
     # Art / Photography
-    "A minimalist still-life arrangement of dried flowers on a plain table",
-    "Soft natural light casting gentle shadows across a simple interior space",
-    "A flat-lay photo of a sketchbook and pencils arranged neatly on a wooden desk"
+    "A still life arrangement of objects on a table",
+    "An interior space with shadows and patterns",
+    "A flat lay photo of a sketchbook and pencils on a desk"
 ]
+
 
    
 
