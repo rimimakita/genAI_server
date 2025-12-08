@@ -114,7 +114,6 @@ amazon_prompts = [
 
     # Pet Supplies
     "a basic dog collar",
-    "a toy ball for cats",
 
     # Home & Kitchen
     "a ceramic mug",
