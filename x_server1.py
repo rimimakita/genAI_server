@@ -59,15 +59,26 @@ def init_models():
 def build_prompt(caption: str) -> str:
     text = caption.strip()
 
-    # 1. "twitter" を大文字小文字問わず削除
+    # --- 既存 ---
     text = re.sub(r"twitter", "", text, flags=re.IGNORECASE)
 
-    # 2. "screenshot", "screen shot", "screen-shot" などを "image" に統一
-    text = re.sub(r"screens? ?shot|screen[\s-]*shot", "image", text, flags=re.IGNORECASE)
-    # 簡単にするなら：
-    # text = re.sub(r"screenshot|screen[\s-]+shot", "image", text, flags=re.IGNORECASE)
+    # --- スクリーンショット系 → image ---
+    text = re.sub(
+        r"screens? ?shot|screen[\s-]*shot",
+        "image",
+        text,
+        flags=re.IGNORECASE
+    )
 
-    # 3. 余分な空白を整形
+    # --- 追加：tweet, app, post → image ---
+    text = re.sub(
+        r"tweet|app|post",
+        "image",
+        text,
+        flags=re.IGNORECASE
+    )
+
+    # --- 空白整形 ---
     text = re.sub(r"\s+", " ", text).strip()
 
     return text
