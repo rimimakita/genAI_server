@@ -59,36 +59,16 @@ def init_models():
 def build_prompt(caption: str) -> str:
     text = caption.strip()
 
-    # --- 既存 ---
     text = re.sub(r"twitter", "", text, flags=re.IGNORECASE)
 
-    # --- スクリーンショット系 → image ---
-    text = re.sub(
-        r"screens? ?shot|screen[\s-]*shot",
-        "image",
-        text,
-        flags=re.IGNORECASE
-    )
+    text = re.sub(r"screens? ?shot|screen[\s-]*shot", "image", text, flags=re.IGNORECASE)
 
-    # --- 追加：tweet, app, post → image ---
-    text = re.sub(
-        r"tweet|app|post",
-        "image",
-        text,
-        flags=re.IGNORECASE
-    )
+    text = re.sub(r"tweet|app|post", "image", text, flags=re.IGNORECASE)
 
-    # --- ★ 追加：Japanese text → message ---
-    text = re.sub(
-        r"japanese text",
-        "message",
-        text,
-        flags=re.IGNORECASE
-    )
+    # --- Japanese text / Japanese language → message ---
+    text = re.sub(r"japanese (text|language)", "message", text, flags=re.IGNORECASE)
 
-    # --- 空白整形 ---
     text = re.sub(r"\s+", " ", text).strip()
-
     return text
 
     
