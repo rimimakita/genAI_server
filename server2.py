@@ -61,6 +61,7 @@ ADJECTIVES = [
 "A rectangular prepaid gift card with printed value"
 ]
 
+
 amazon_prompts = [
     # Amazon Devices & Accessories
     "a simple protective case for a tablet",
@@ -86,20 +87,24 @@ amazon_prompts = [
 
     # Toys
     "a set of wooden building blocks",
-    "a small rubber ball",
+    # "a small rubber ball",   ← 削除
 
     # Gift Cards
     "a plain plastic gift card",
 
     # Sports & Outdoors
-    "an inflated sports ball",
+    # "an inflated sports ball", ← 削除
     "a lightweight collapsible water bottle",
 
-    # Digital Music (physical representation)
+    # Digital Music
     "a pair of black over-ear headphones",
 
-    # Drugstore
+    # Drugstore  ←★ここを拡張
     "a plain shampoo bottle",
+    "a tall shampoo bottle",
+    "a simple conditioner bottle",
+    "a small travel-sized shampoo bottle",
+    "a shampoo bottle with a pump top",
     "a white container of skincare cream",
 
     # Beauty
@@ -153,6 +158,7 @@ amazon_prompts = [
     "a clear bottle of mineral water",
     "a pack of individually wrapped snacks"
 ]
+
 
 
 def generate_random_caption(seed=None):
