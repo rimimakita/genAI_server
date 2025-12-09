@@ -56,37 +56,70 @@ def init_models():
     with torch.no_grad():
         _ = pipe(prompt=["dummy"], height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
         
-def build_prompt(caption):
-    prompt_caption = caption
-    # --- 追加：screenshot → image に置換 ---
-    prompt_caption = re.sub(r"screenshot", "image", prompt_caption, flags=re.IGNORECASE)
+def clean_caption(caption: str) -> str:
+    """
+    ・screenshot / Screen shot などを image に置換
+    ・keywords を object に置換
+    ・最後に前後の空白を削除
+    """
+    text = caption
 
+    # screenshot / screen shot → image（大文字小文字無視）
+    text = re.sub(r"screenshot|screen\s+shot", "image", text, flags=re.IGNORECASE)
+
+    # 禁止語句など keywords を object に置換（大文字小文字無視）
     for kw in keywords:
-        prompt_caption = prompt_caption.replace(kw, "object").replace(kw.capitalize(), "object")
-    return f"A photo of a {prompt_caption} item on a white background, centered, no text, no shadow, no packaging."
-# def generate_caption(image):
-#     with torch.no_grad():
-#         inputs = caption_processor(images=image, return_tensors="pt").to(device)
-#         generated_ids = caption_model.generate(**inputs, max_new_tokens=30)
-#         caption = caption_processor.decode(generated_ids[0], skip_special_tokens=True)
-#         return caption.strip()
+        # re.escape しておくと記号が入ってても安全
+        pattern = re.compile(re.escape(kw), flags=re.IGNORECASE)
+        text = pattern.sub("object", text)
+
+    return text.strip()
+
+
+def build_prompt(caption):
+    # 整えられた caption をまず作る
+    prompt_caption = clean_caption(caption)
+    return (
+        f"A photo of a {prompt_caption} item on a white background, "
+        f"centered, no text, no shadow, no packaging."
+    )
+
+
 def generate_caption(image):
     with torch.no_grad():
         inputs = caption_processor(images=image, return_tensors="pt").to(device)
         generated_ids = caption_model.generate(**inputs, max_new_tokens=30)
-        caption = caption_processor.tokenizer.decode(generated_ids[0], skip_special_tokens=True)
+        caption = caption_processor.tokenizer.decode(
+            generated_ids[0], skip_special_tokens=True
+        )
         return caption.strip()
+
+
 def generate_images(index_caption_pairs):
+    # ★ prompt 用は build_prompt（内部で clean_caption 済み）
     prompts = [build_prompt(caption) for _, caption in index_caption_pairs]
+
     with pipe_lock, torch.no_grad():
-        images = pipe(prompt=prompts, height=512, width=512, num_inference_steps=1, guidance_scale=0.0).images
+        images = pipe(
+            prompt=prompts,
+            height=512,
+            width=512,
+            num_inference_steps=1,
+            guidance_scale=0.0,
+        ).images
+
     results = []
     for (idx, caption), img in zip(index_caption_pairs, images):
+        # ★ result に入れる caption も禁止語句処理後の整えたもの
+        cleaned_caption = clean_caption(caption)
+
         buffer = io.BytesIO()
         img.save(buffer, format="JPEG")
         buffer.seek(0)
-        prompt = build_prompt(caption)
-        results.append((idx, buffer.read(), prompt))  # ← キャプションも追加
+
+        # ここに入るのは「整えられた caption」
+        results.append((idx, buffer.read(), cleaned_caption))
+
     with queue_lock:
         for item in results:
             result_queue.append(item)
