@@ -64,99 +64,97 @@ ADJECTIVES = [
 
 amazon_prompts = [
     # Amazon Devices & Accessories
-    "a simple protective case for a tablet",
-    "a plain protective film for a smartphone",
+    "a protective case for a tablet",
+    "a protective film for a smartphone",
 
     # DIY, Tools & Garden
-    "a metal hammer with a basic handle",
-    "a small gardening trowel",
+    "a metal hammer",
+    "a gardening trowel",
 
     # PC Software / PC-related objects
     "a USB flash drive",
 
     # Computers & Peripherals (expanded)
     "a laptop with a closed lid",
-    "a simple desktop monitor",
-    "a compact wireless keyboard",
+    "a desktop monitor",
+    "a wireless keyboard",
     "a wireless mouse",
 
     # Apps & Games / Gaming devices
-    "a simple game controller",
-    "a small portable game console",
+    "a game controller",
+    "a portable game console",
     "a home video game console",
 
     # Toys
-    "a set of wooden building blocks",
-    # "a small rubber ball",   ← 削除
+    "wooden building blocks",
 
     # Gift Cards
-    "a plain plastic gift card",
+    "a plastic gift card",
 
     # Sports & Outdoors
-    # "an inflated sports ball", ← 削除
-    "a lightweight collapsible water bottle",
+    "a collapsible water bottle",
 
     # Digital Music
-    "a pair of black over-ear headphones",
+    "over-ear headphones",
 
-    # Drugstore  ←★ここを拡張
-    "a plain shampoo bottle",
-    "a tall shampoo bottle",
-    "a simple conditioner bottle",
-    "a small travel-sized shampoo bottle",
-    "a shampoo bottle with a pump top",
+    # Drugstore（★シャンプー系 半減）
+    "a shampoo bottle",
+    "a conditioner bottle",
+    "a hair care bottle",
     "a white container of skincare cream",
 
     # Beauty
-    "a makeup face brush",
-    "a round compact mirror",
+    "a makeup brush",
+    "a compact mirror",
 
-    # Fashion (expanded)
-    "a plain fabric tote bag",
-    "a pair of simple cloth slippers",
-    "a basic short-sleeve T-shirt",
-    "a folded stack of towels",
+    # Fashion
+    "a fabric tote bag",
+    "cloth slippers",
+    "a short-sleeve T-shirt",
+    "folded towels",
 
     # Pet Supplies
-    "a basic dog collar",
+    "a dog collar",
 
     # Home & Kitchen
     "a ceramic mug",
     "a wooden cutting board",
 
     # Hobby
-    "a set of drawing pencils",
-    "a small brush for model building",
+    "drawing pencils",
+    "a brush for model building",
 
     # Music
-    "a set of acoustic guitar strings",
+    "acoustic guitar strings",
 
-    # Large Appliances (safe items only)
-    "a small electric kettle",
-    "a household table fan",
+    # Large Appliances
+    "an electric kettle",
+    "a table fan",
 
     # Electronics & Cameras
-    "a simple digital camera",
-    "a small desk lamp",
+    "a digital camera",
+    "a desk lamp",
 
     # Office Supplies
     "a notebook and a ballpoint pen",
-    "a set of metal paper clips",
+    "metal paper clips",
 
     # Books
-    "a thick book with a plain cover",
+    "a book with a plain cover",
 
     # Musical Instruments
-    "a small electronic metronome",
-    "a simple recorder flute",
+    "an electronic metronome",
+    "a recorder flute",
 
     # Automotive
-    "a universal smartphone holder for cars",
-    "a small helmet bag for motorcycles",
+    "a smartphone holder for cars",
+    "a helmet bag for motorcycles",
 
-    # Food, Drinks & Alcohol
-    "a clear bottle of mineral water",
-    "a pack of individually wrapped snacks"
+    # Food, Drinks & Alcohol（★少し増やした）
+    "a bottle of mineral water",
+    "a packaged chocolate bar",
+    "a pack of crackers",
+    "a bag of roasted nuts"
 ]
 
 
