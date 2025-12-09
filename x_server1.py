@@ -55,7 +55,7 @@ def init_models():
     pipe.scheduler = DDIMScheduler.from_config(pipe.scheduler.config)
     with torch.no_grad():
         _ = pipe(prompt=["dummy"], height=448, width=448, num_inference_steps=1, guidance_scale=0.0).images
-        
+
 def build_prompt(caption: str) -> str:
     text = caption.strip()
 
@@ -78,10 +78,19 @@ def build_prompt(caption: str) -> str:
         flags=re.IGNORECASE
     )
 
+    # --- ★ 追加：Japanese text → message ---
+    text = re.sub(
+        r"japanese text",
+        "message",
+        text,
+        flags=re.IGNORECASE
+    )
+
     # --- 空白整形 ---
     text = re.sub(r"\s+", " ", text).strip()
 
     return text
+
     
 def generate_images(index_caption_pairs):
     prompts = [build_prompt(caption) for _, caption in index_caption_pairs]
