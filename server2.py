@@ -113,9 +113,6 @@ amazon_prompts = [
     "a short-sleeve T-shirt",
     "folded towels",
 
-    # Pet Supplies
-    "a dog collar",
-
     # Home & Kitchen
     "a ceramic mug",
     "a wooden cutting board",
